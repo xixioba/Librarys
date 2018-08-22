@@ -1,79 +1,79 @@
 #include "af_spi.h"
 
 /**
-  * 函数功能: 擦除扇区
-  * 输入参数: SectorAddr：待擦除扇区地址，要求为4096倍数
-  * 返 回 值: 无
-  * 说    明：串行Flash最小擦除块大小为4KB(4096字节)，即一个扇区大小，要求输入参数
-  *           为4096倍数。在往串行Flash芯片写入数据之前要求先擦除空间。
+  * 潞炉脢媒鹿娄脛脺: 虏脕鲁媒脡脠脟酶
+  * 脢盲脠毛虏脦脢媒: SectorAddr拢潞麓媒虏脕鲁媒脡脠脟酶碌脴脰路拢卢脪陋脟贸脦陋4096卤露脢媒
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞麓庐脨脨Flash脳卯脨隆虏脕鲁媒驴茅麓贸脨隆脦陋4KB(4096脳脰陆脷)拢卢录麓脪禄赂枚脡脠脟酶麓贸脨隆拢卢脪陋脟贸脢盲脠毛虏脦脢媒
+  *           脦陋4096卤露脢媒隆拢脭脷脥霉麓庐脨脨Flash脨戮脝卢脨麓脠毛脢媒戮脻脰庐脟掳脪陋脟贸脧脠虏脕鲁媒驴脮录盲隆拢
   */
 void SPI_FLASH_SectorErase(uint32_t SectorAddr)
 {
-  /* 发送FLASH写使能命令 */
+  /* 路垄脣脥FLASH脨麓脢鹿脛脺脙眉脕卯 */
   SPI_FLASH_WriteEnable();
   SPI_FLASH_WaitForWriteEnd();
-  /* 擦除扇区 */
-  /* 选择串行FLASH: CS低电平 */
+  /* 虏脕鲁媒脡脠脟酶 */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
-  /* 发送扇区擦除指令*/
+  /* 路垄脣脥脡脠脟酶虏脕鲁媒脰赂脕卯*/
   SPI_FLASH_SendByte(W25X_SectorErase);
-  /*发送擦除扇区地址的高位*/
+  /*路垄脣脥虏脕鲁媒脡脠脟酶碌脴脰路碌脛赂脽脦禄*/
   SPI_FLASH_SendByte((SectorAddr & 0xFF0000) >> 16);
-  /* 发送擦除扇区地址的中位 */
+  /* 路垄脣脥虏脕鲁媒脡脠脟酶碌脴脰路碌脛脰脨脦禄 */
   SPI_FLASH_SendByte((SectorAddr & 0xFF00) >> 8);
-  /* 发送擦除扇区地址的低位 */
+  /* 路垄脣脥虏脕鲁媒脡脠脟酶碌脴脰路碌脛碌脥脦禄 */
   SPI_FLASH_SendByte(SectorAddr & 0xFF);
-  /* 禁用串行FLASH: CS 高电平 */
+  /* 陆没脫脙麓庐脨脨FLASH: CS 赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
-  /* 等待擦除完毕*/
+  /* 碌脠麓媒虏脕鲁媒脥锚卤脧*/
   SPI_FLASH_WaitForWriteEnd();
 }
 
 /**
-  * 函数功能: 擦除整片
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：擦除串行Flash整片空间
+  * 潞炉脢媒鹿娄脛脺: 虏脕鲁媒脮没脝卢
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞虏脕鲁媒麓庐脨脨Flash脮没脝卢驴脮录盲
   */
 void SPI_FLASH_BulkErase(void)
 {
- /* 发送FLASH写使能命令 */
+ /* 路垄脣脥FLASH脨麓脢鹿脛脺脙眉脕卯 */
   SPI_FLASH_WriteEnable();
 
-  /* 整片擦除 Erase */
-  /* 选择串行FLASH: CS低电平 */
+  /* 脮没脝卢虏脕鲁媒 Erase */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
-  /* 发送整片擦除指令*/
+  /* 路垄脣脥脮没脝卢虏脕鲁媒脰赂脕卯*/
   SPI_FLASH_SendByte(W25X_ChipErase);
-  /* 禁用串行FLASH: CS高电平 */
+  /* 陆没脫脙麓庐脨脨FLASH: CS赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
 
-  /* 等待擦除完毕*/
+  /* 碌脠麓媒虏脕鲁媒脥锚卤脧*/
   SPI_FLASH_WaitForWriteEnd();
 }
 
 /**
-  * 函数功能: 往串行FLASH按页写入数据，调用本函数写入数据前需要先擦除扇区
-  * 输入参数: pBuffer：待写入数据的指针
-  *           WriteAddr：写入地址
-  *           NumByteToWrite：写入数据长度，必须小于等于SPI_FLASH_PerWritePageSize
-  * 返 回 值: 无
-  * 说    明：串行Flash每页大小为256个字节
+  * 潞炉脢媒鹿娄脛脺: 脥霉麓庐脨脨FLASH掳麓脪鲁脨麓脠毛脢媒戮脻拢卢碌梅脫脙卤戮潞炉脢媒脨麓脠毛脢媒戮脻脟掳脨猫脪陋脧脠虏脕鲁媒脡脠脟酶
+  * 脢盲脠毛虏脦脢媒: pBuffer拢潞麓媒脨麓脠毛脢媒戮脻碌脛脰赂脮毛
+  *           WriteAddr拢潞脨麓脠毛碌脴脰路
+  *           NumByteToWrite拢潞脨麓脠毛脢媒戮脻鲁陇露脠拢卢卤脴脨毛脨隆脫脷碌脠脫脷SPI_FLASH_PerWritePageSize
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞麓庐脨脨Flash脙驴脪鲁麓贸脨隆脦陋256赂枚脳脰陆脷
   */
 void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
-  /* 发送FLASH写使能命令 */
+  /* 路垄脣脥FLASH脨麓脢鹿脛脺脙眉脕卯 */
   SPI_FLASH_WriteEnable();
 
-   /* 寻找串行FLASH: CS低电平 */
+   /* 脩掳脮脪麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
-  /* 写送写指令*/
+  /* 脨麓脣脥脨麓脰赂脕卯*/
   SPI_FLASH_SendByte(W25X_PageProgram);
-  /*发送写地址的高位*/
+  /*路垄脣脥脨麓碌脴脰路碌脛赂脽脦禄*/
   SPI_FLASH_SendByte((WriteAddr & 0xFF0000) >> 16);
-  /*发送写地址的中位*/
+  /*路垄脣脥脨麓碌脴脰路碌脛脰脨脦禄*/
   SPI_FLASH_SendByte((WriteAddr & 0xFF00) >> 8);
-  /*发送写地址的低位*/
+  /*路垄脣脥脨麓碌脴脰路碌脛碌脥脦禄*/
   SPI_FLASH_SendByte(WriteAddr & 0xFF);
 
   if(NumByteToWrite > SPI_FLASH_PerWritePageSize)
@@ -82,29 +82,29 @@ void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteT
      //printf("Err: SPI_FLASH_PageWrite too large!\n");
   }
 
-  /* 写入数据*/
+  /* 脨麓脠毛脢媒戮脻*/
   while (NumByteToWrite--)
   {
-     /* 发送当前要写入的字节数据 */
+     /* 路垄脣脥碌卤脟掳脪陋脨麓脠毛碌脛脳脰陆脷脢媒戮脻 */
     SPI_FLASH_SendByte(*pBuffer);
-     /* 指向下一字节数据 */
+     /* 脰赂脧貌脧脗脪禄脳脰陆脷脢媒戮脻 */
     pBuffer++;
   }
 
-  /* 禁用串行FLASH: CS 高电平 */
+  /* 陆没脫脙麓庐脨脨FLASH: CS 赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
 
-  /* 等待写入完毕*/
+  /* 碌脠麓媒脨麓脠毛脥锚卤脧*/
   SPI_FLASH_WaitForWriteEnd();
 }
 
 /**
-  * 函数功能: 往串行FLASH写入数据，调用本函数写入数据前需要先擦除扇区
-  * 输入参数: pBuffer：待写入数据的指针
-  *           WriteAddr：写入地址
-  *           NumByteToWrite：写入数据长度
-  * 返 回 值: 无
-  * 说    明：该函数可以设置任意写入数据长度
+  * 潞炉脢媒鹿娄脛脺: 脥霉麓庐脨脨FLASH脨麓脠毛脢媒戮脻拢卢碌梅脫脙卤戮潞炉脢媒脨麓脠毛脢媒戮脻脟掳脨猫脪陋脧脠虏脕鲁媒脡脠脟酶
+  * 脢盲脠毛虏脦脢媒: pBuffer拢潞麓媒脨麓脠毛脢媒戮脻碌脛脰赂脮毛
+  *           WriteAddr拢潞脨麓脠毛碌脴脰路
+  *           NumByteToWrite拢潞脨麓脠毛脢媒戮脻鲁陇露脠
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞赂脙潞炉脢媒驴脡脪脭脡猫脰脙脠脦脪芒脨麓脠毛脢媒戮脻鲁陇露脠
   */
 void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
@@ -115,7 +115,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
   NumOfPage =  NumByteToWrite / SPI_FLASH_PageSize;
   NumOfSingle = NumByteToWrite % SPI_FLASH_PageSize;
 
-  if (Addr == 0) /* 若地址与 SPI_FLASH_PageSize 对齐  */
+  if (Addr == 0) /* 脠么碌脴脰路脫毛 SPI_FLASH_PageSize 露脭脝毛  */
   {
     if (NumOfPage == 0) /* NumByteToWrite < SPI_FLASH_PageSize */
     {
@@ -133,7 +133,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
       SPI_FLASH_PageWrite(pBuffer, WriteAddr, NumOfSingle);
     }
   }
-  else /* 若地址与 SPI_FLASH_PageSize 不对齐 */
+  else /* 脠么碌脴脰路脫毛 SPI_FLASH_PageSize 虏禄露脭脝毛 */
   {
     if (NumOfPage == 0) /* NumByteToWrite < SPI_FLASH_PageSize */
     {
@@ -178,70 +178,70 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
 }
 
 /**
-  * 函数功能: 从串行Flash读取数据
-  * 输入参数: pBuffer：存放读取到数据的指针
-  *           ReadAddr：读取数据目标地址
-  *           NumByteToRead：读取数据长度
-  * 返 回 值: 无
-  * 说    明：该函数可以设置任意读取数据长度
+  * 潞炉脢媒鹿娄脛脺: 麓脫麓庐脨脨Flash露脕脠隆脢媒戮脻
+  * 脢盲脠毛虏脦脢媒: pBuffer拢潞麓忙路脜露脕脠隆碌陆脢媒戮脻碌脛脰赂脮毛
+  *           ReadAddr拢潞露脕脠隆脢媒戮脻脛驴卤锚碌脴脰路
+  *           NumByteToRead拢潞露脕脠隆脢媒戮脻鲁陇露脠
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞赂脙潞炉脢媒驴脡脪脭脡猫脰脙脠脦脪芒露脕脠隆脢媒戮脻鲁陇露脠
   */
 void SPI_FLASH_BufferRead(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
-  /* 选择串行FLASH: CS低电平 */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
 
-  /* 发送 读 指令 */
+  /* 路垄脣脥 露脕 脰赂脕卯 */
   SPI_FLASH_SendByte(W25X_ReadData);
 
-  /* 发送 读 地址高位 */
+  /* 路垄脣脥 露脕 碌脴脰路赂脽脦禄 */
   SPI_FLASH_SendByte((ReadAddr & 0xFF0000) >> 16);
-  /* 发送 读 地址中位 */
+  /* 路垄脣脥 露脕 碌脴脰路脰脨脦禄 */
   SPI_FLASH_SendByte((ReadAddr& 0xFF00) >> 8);
-  /* 发送 读 地址低位 */
+  /* 路垄脣脥 露脕 碌脴脰路碌脥脦禄 */
   SPI_FLASH_SendByte(ReadAddr & 0xFF);
 
-  while (NumByteToRead--) /* 读取数据 */
+  while (NumByteToRead--) /* 露脕脠隆脢媒戮脻 */
   {
-     /* 读取一个字节*/
+     /* 露脕脠隆脪禄赂枚脳脰陆脷*/
     *pBuffer = SPI_FLASH_SendByte(Dummy_Byte);
-    /* 指向下一个字节缓冲区 */
+    /* 脰赂脧貌脧脗脪禄赂枚脳脰陆脷禄潞鲁氓脟酶 */
     pBuffer++;
   }
 
-  /* 禁用串行FLASH: CS 高电平 */
+  /* 陆没脫脙麓庐脨脨FLASH: CS 赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
 }
 
 /**
-  * 函数功能: 读取串行Flash型号的ID
-  * 输入参数: 无
-  * 返 回 值: uint32_t：串行Flash的型号ID
-  * 说    明：  FLASH_ID      IC型号      存储空间大小         
+  * 潞炉脢媒鹿娄脛脺: 露脕脠隆麓庐脨脨Flash脨脥潞脜碌脛ID
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: uint32_t拢潞麓庐脨脨Flash碌脛脨脥潞脜ID
+  * 脣碌    脙梅拢潞  FLASH_ID      IC脨脥潞脜      麓忙麓垄驴脮录盲麓贸脨隆         
                 0xEF3015      W25X16        2M byte
                 0xEF4015	    W25Q16        4M byte
                 0XEF4017      W25Q64        8M byte
-                0XEF4018      W25Q128       16M byte  (YS-F1Pro开发板默认配置)
+                0XEF4018      W25Q128       16M byte  (YS-F1Pro驴陋路垄掳氓脛卢脠脧脜盲脰脙)
   */
 uint32_t SPI_FLASH_ReadID(void)
 {
   uint32_t Temp = 0, Temp0 = 0, Temp1 = 0, Temp2 = 0;
 
-  /* 选择串行FLASH: CS低电平 */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
 
-  /* 发送命令：读取芯片型号ID */
+  /* 路垄脣脥脙眉脕卯拢潞露脕脠隆脨戮脝卢脨脥潞脜ID */
   SPI_FLASH_SendByte(W25X_JedecDeviceID);
 
-  /* 从串行Flash读取一个字节数据 */
+  /* 麓脫麓庐脨脨Flash露脕脠隆脪禄赂枚脳脰陆脷脢媒戮脻 */
   Temp0 = SPI_FLASH_SendByte(Dummy_Byte);
 
-  /* 从串行Flash读取一个字节数据 */
+  /* 麓脫麓庐脨脨Flash露脕脠隆脪禄赂枚脳脰陆脷脢媒戮脻 */
   Temp1 = SPI_FLASH_SendByte(Dummy_Byte);
 
-  /* 从串行Flash读取一个字节数据 */
+  /* 麓脫麓庐脨脨Flash露脕脠隆脪禄赂枚脳脰陆脷脢媒戮脻 */
   Temp2 = SPI_FLASH_SendByte(Dummy_Byte);
 
-  /* 禁用串行Flash：CS高电平 */
+  /* 陆没脫脙麓庐脨脨Flash拢潞CS赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
   
   Temp = (Temp0 << 16) | (Temp1 << 8) | Temp2;
@@ -249,38 +249,38 @@ uint32_t SPI_FLASH_ReadID(void)
 }
 
 /**
-  * 函数功能: 读取串行Flash设备ID
-  * 输入参数: 无
-  * 返 回 值: uint32_t：串行Flash的设备ID
-  * 说    明：
+  * 潞炉脢媒鹿娄脛脺: 露脕脠隆麓庐脨脨Flash脡猫卤赂ID
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: uint32_t拢潞麓庐脨脨Flash碌脛脡猫卤赂ID
+  * 脣碌    脙梅拢潞
   */
 uint32_t SPI_FLASH_ReadDeviceID(void)
 {
   uint32_t Temp = 0;
 
-  /* 选择串行FLASH: CS低电平 */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
 
-  /* 发送命令：读取芯片设备ID * */
+  /* 路垄脣脥脙眉脕卯拢潞露脕脠隆脨戮脝卢脡猫卤赂ID * */
   SPI_FLASH_SendByte(W25X_DeviceID);
   SPI_FLASH_SendByte(Dummy_Byte);
   SPI_FLASH_SendByte(Dummy_Byte);
   SPI_FLASH_SendByte(Dummy_Byte);
   
-  /* 从串行Flash读取一个字节数据 */
+  /* 麓脫麓庐脨脨Flash露脕脠隆脪禄赂枚脳脰陆脷脢媒戮脻 */
   Temp = SPI_FLASH_SendByte(Dummy_Byte);
 
-  /* 禁用串行Flash：CS高电平 */
+  /* 陆没脫脙麓庐脨脨Flash拢潞CS赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
 
   return Temp;
 }
 
 /**
-  * 函数功能: 启动连续读取数据串
-  * 输入参数: ReadAddr：读取地址
-  * 返 回 值: 无
-  * 说    明：Initiates a read data byte (READ) sequence from the Flash.
+  * 潞炉脢媒鹿娄脛脺: 脝么露炉脕卢脨酶露脕脠隆脢媒戮脻麓庐
+  * 脢盲脠毛虏脦脢媒: ReadAddr拢潞露脕脠隆碌脴脰路
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞Initiates a read data byte (READ) sequence from the Flash.
   *           This is done by driving the /CS line low to select the device,
   *           then the READ instruction is transmitted followed by 3 bytes
   *           address. This function exit and keep the /CS line low, so the
@@ -305,10 +305,10 @@ void SPI_FLASH_StartReadSequence(uint32_t ReadAddr)
 }
 
 /**
-  * 函数功能: 从串行Flash读取一个字节数据
-  * 输入参数: 无
-  * 返 回 值: uint8_t：读取到的数据
-  * 说    明：This function must be used only if the Start_Read_Sequence
+  * 潞炉脢媒鹿娄脛脺: 麓脫麓庐脨脨Flash露脕脠隆脪禄赂枚脳脰陆脷脢媒戮脻
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: uint8_t拢潞露脕脠隆碌陆碌脛脢媒戮脻
+  * 脣碌    脙梅拢潞This function must be used only if the Start_Read_Sequence
   *           function has been previously called.
   */
 uint8_t SPI_FLASH_ReadByte(void)
@@ -321,10 +321,10 @@ uint8_t SPI_FLASH_ReadByte(void)
 }
 
 /**
-  * 函数功能: 往串行Flash读取写入一个字节数据并接收一个字节数据
-  * 输入参数: byte：待发送数据
-  * 返 回 值: uint8_t：接收到的数据
-  * 说    明：无
+  * 潞炉脢媒鹿娄脛脺: 脥霉麓庐脨脨Flash露脕脠隆脨麓脠毛脪禄赂枚脳脰陆脷脢媒戮脻虏垄陆脫脢脮脪禄赂枚脳脰陆脷脢媒戮脻
+  * 脢盲脠毛虏脦脢媒: byte拢潞麓媒路垄脣脥脢媒戮脻
+  * 路碌 禄脴 脰碌: uint8_t拢潞陆脫脢脮碌陆碌脛脢媒戮脻
+  * 脣碌    脙梅拢潞脦脼
   */
 uint8_t SPI_FLASH_SendByte(uint8_t byte)
 {
@@ -336,28 +336,28 @@ uint8_t SPI_FLASH_SendByte(uint8_t byte)
 }
 
 /**
-  * 函数功能: 使能串行Flash写操作
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：无
+  * 潞炉脢媒鹿娄脛脺: 脢鹿脛脺麓庐脨脨Flash脨麓虏脵脳梅
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞脦脼
   */
 void SPI_FLASH_WriteEnable(void)
 {
-  /* 选择串行FLASH: CS低电平 */
+  /* 脩隆脭帽麓庐脨脨FLASH: CS碌脥碌莽脝陆 */
   FLASH_SPI_CS_ENABLE();
 
-  /* 发送命令：写使能 */
+  /* 路垄脣脥脙眉脕卯拢潞脨麓脢鹿脛脺 */
   SPI_FLASH_SendByte(W25X_WriteEnable);
 
-  /* 禁用串行Flash：CS高电平 */
+  /* 陆没脫脙麓庐脨脨Flash拢潞CS赂脽碌莽脝陆 */
   FLASH_SPI_CS_DISABLE();
 }
 
 /**
-  * 函数功能: 等待数据写入完成
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：Polls the status of the Write In Progress (WIP) flag in the
+  * 潞炉脢媒鹿娄脛脺: 碌脠麓媒脢媒戮脻脨麓脠毛脥锚鲁脡
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞Polls the status of the Write In Progress (WIP) flag in the
   *           FLASH's status  register  and  loop  until write  opertaion
   *           has completed.
   */
@@ -386,10 +386,10 @@ void SPI_FLASH_WaitForWriteEnd(void)
 
 
 /**
-  * 函数功能: 进入掉电模式
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：无
+  * 潞炉脢媒鹿娄脛脺: 陆酶脠毛碌么碌莽脛拢脢陆
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞脦脼
   */
 void SPI_Flash_PowerDown(void)   
 { 
@@ -404,10 +404,10 @@ void SPI_Flash_PowerDown(void)
 }   
 
 /**
-  * 函数功能: 唤醒串行Flash
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：无
+  * 潞炉脢媒鹿娄脛脺: 禄陆脨脩麓庐脨脨Flash
+  * 脢盲脠毛虏脦脢媒: 脦脼
+  * 路碌 禄脴 脰碌: 脦脼
+  * 脣碌    脙梅拢潞脦脼
   */
 void SPI_Flash_WAKEUP(void)   
 {
@@ -426,10 +426,10 @@ void SPI_Flash_WAKEUP(void)
 
 void Copy_font_from_sd(void)
 {
-FATFS fs;													/* FatFs文件系统对象 */
-FIL file;													/* 文件对象 */
-FRESULT f_res;                    /* 文件操作结果 */
-UINT fnum;            					  /* 文件成功读写数量 */
+FATFS fs;													/* FatFs脦脛录镁脧碌脥鲁露脭脧贸 */
+FIL file;													/* 脦脛录镁露脭脧贸 */
+FRESULT f_res;                    /* 脦脛录镁虏脵脳梅陆谩鹿没 */
+UINT fnum;            					  /* 脦脛录镁鲁脡鹿娄露脕脨麓脢媒脕驴 */
 	uint32_t write_addr=0,j=0,i=0;
 	uint8_t tempbuf[256]={0};
     printf("\r\n0x%X\r\n",SPI_FLASH_ReadID());
@@ -452,26 +452,26 @@ UINT fnum;            					  /* 文件成功读写数量 */
     f_res = f_open(&file,"0:GBK_1616.FON",FA_OPEN_EXISTING | FA_READ);  
     if(f_res==FR_OK)
     {
-      // 擦除空间
+      // 虏脕鲁媒驴脮录盲
       write_addr=GBK_1616_ADDR;
-      for(j=0;j<GBK_1616_SIZE;j++)//擦除扇区
+      for(j=0;j<GBK_1616_SIZE;j++)//虏脕鲁媒脡脠脟酶
       {
         SPI_FLASH_SectorErase(write_addr+j*4096);
           for(i=0;i<16;i++)
           {
-            f_res = f_read( &file, tempbuf, 256, &fnum);//读取数据	 
+            f_res = f_read( &file, tempbuf, 256, &fnum);//露脕脠隆脢媒戮脻	 
             if(f_res!=FR_OK||fnum!=256)
-            {            //执行错误  
+            {            //脰麓脨脨麓铆脦贸  
                 DEBUG();
                 break;
             }
-            SPI_FLASH_PageWrite(tempbuf,write_addr+j*4096+i*256,256);  //拷贝数据到串行flash上
+            SPI_FLASH_PageWrite(tempbuf,write_addr+j*4096+i*256,256);  //驴陆卤麓脢媒戮脻碌陆麓庐脨脨flash脡脧
           }
             
       }
     f_close(&file);
     
-    SPI_FLASH_BufferRead(tempbuf,GBK_1616_ADDR,256);			//读取数据，打印验证
+    SPI_FLASH_BufferRead(tempbuf,GBK_1616_ADDR,256);			//露脕脠隆脢媒戮脻拢卢麓貌脫隆脩茅脰陇
     printf("readbuf GBK_1616.FON:\n");
     for(j=0;j<256;j++)
       printf("%02X ",tempbuf[j]);
