@@ -1,5 +1,6 @@
 #ifndef __RINGBUFF_H
 #define __RINGBUFF_H
+
 //面向过程编程
 void ringbuff_init(int len);
 int ringbuff_canwrite(void);
@@ -22,6 +23,9 @@ class Ringbuf
         int pk_loss;
         float pkl;
     }Cache;
+    
+    pthread_spinlock_t  lock_w;
+    pthread_spinlock_t  lock_r;
     public:
     	Ringbuf(int len);
         ~Ringbuf(void); 

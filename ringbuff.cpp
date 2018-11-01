@@ -6,6 +6,8 @@
 
 using namespace std;
 
+
+
 Ringbuf::Ringbuf(int len)
 {
     Cache.buff=new uint8_t[len];
@@ -13,20 +15,13 @@ Ringbuf::Ringbuf(int len)
     Cache.read=0;
     Cache.write=0;
     Cache.len=len;
+    
 }
 
 Ringbuf::~Ringbuf(void)
 {
     delete Cache.buff;
 }
-// void Ringbuf::init(int len)
-// {
-//     Cache.buff=new uint8_t[len];
-//     memset(Cache.buff,0,len);
-//     Cache.read=0;
-//     Cache.write=0;
-//     Cache.len=len;
-// }
 
 int Ringbuf::canwrite(void)
 {
@@ -45,6 +40,7 @@ int Ringbuf::canwrite(void)
    }
     return lave;
 }
+
 
 int Ringbuf::canread(void)
 {
@@ -86,10 +82,11 @@ int Ringbuf::add(uint8_t *buff,int n)
             memcpy(Cache.buff+Cache.write,buff,n);
             Cache.write+=n;
         }
-    Cache.pk_total+=n;
-    return n;
+        Cache.pk_total+=n;
+        return n;
     }
     return 0;
+    
 }
 
 int Ringbuf::read(uint8_t *buff,int len)
@@ -121,7 +118,7 @@ int Ringbuf::read(uint8_t *buff,int len)
                Cache.read=len-lave;
            }
        }
-    return len;
+        return len;
     }
     return 0;
 }
