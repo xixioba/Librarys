@@ -3,10 +3,10 @@
 
 
 /*
-  * º¯Êý¹¦ÄÜ: Íùspi¶ÁÈ¡Ð´ÈëÒ»¸ö×Ö½ÚÊý¾Ý²¢½ÓÊÕÒ»¸ö×Ö½ÚÊý¾Ý
-  * ÊäÈë²ÎÊý: Byte£º´ý·¢ËÍÊý¾Ý 0 Read only,else,Write and Read
-  * ·µ »Ø Öµ: uint8_t£º½ÓÊÕµ½µÄÊý¾Ý
-  * Ëµ    Ã÷£ºÎÞ
+  * å‡½æ•°åŠŸèƒ½: å¾€spiè¯»å–å†™å…¥ä¸€ä¸ªå­—èŠ‚æ•°æ®å¹¶æŽ¥æ”¶ä¸€ä¸ªå­—èŠ‚æ•°æ®
+  * è¾“å…¥å‚æ•°: Byteï¼šå¾…å‘é€æ•°æ® 0 Read only,else,Write and Read
+  * è¿” å›ž å€¼: uint8_tï¼šæŽ¥æ”¶åˆ°çš„æ•°æ®
+  * è¯´    æ˜Žï¼šæ— 
 */
 uint8_t FM25CL64_RW_Byte(uint8_t byte)
 {
@@ -34,19 +34,19 @@ static void FM25CL64_WriteDisable()
 /*
 WPEN 0 0 0 BP1 BP0 WEL 0 
 
-BP1 BP0 ÊÜ±£»¤µÄµØÖ··¶Î§
-0 0 ÎÞ
-0 1 1800h¡«1FFFh£¨¸ß1/4 µØÖ·µÄÇøÓò£©
-1 0 1000h¡«1FFFh£¨¸ß1/2 µØÖ·µÄÇøÓò£©
-1 1 0000h¡«1FFFh£¨Õû¸ö´æ´¢ÕóÁÐ£©
+BP1 BP0 å—ä¿æŠ¤çš„åœ°å€èŒƒå›´
+0 0 æ— 
+0 1 1800hï½ž1FFFhï¼ˆé«˜1/4 åœ°å€çš„åŒºåŸŸï¼‰
+1 0 1000hï½ž1FFFhï¼ˆé«˜1/2 åœ°å€çš„åŒºåŸŸï¼‰
+1 1 0000hï½ž1FFFhï¼ˆæ•´ä¸ªå­˜å‚¨é˜µåˆ—ï¼‰
 
-WEL WPEN /WP ÊÜ±£»¤µÄ´æ´¢¿é    Î´ÊÜµ½±£»¤µÄ´æ´¢¿é   ×´Ì¬¼Ä´æÆ÷
-0   X     X     ÊÜ±£»¤µÄ            ÊÜ±£»¤µÄ        ÊÜ±£»¤µÄ
-1   0     X     ÊÜ±£»¤µÄ            Î´ÊÜ±£»¤µÄ      Î´ÊÜ±£»¤µÄ
-1   1     0     ÊÜ±£»¤µÄ            Î´ÊÜ±£»¤µÄ      ÊÜ±£»¤µÄ
-1   1     1     ÊÜ±£»¤µÄ            Î´ÊÜ±£»¤µÄ      Î´ÊÜ±£»¤µÄ
+WEL WPEN /WP å—ä¿æŠ¤çš„å­˜å‚¨å—    æœªå—åˆ°ä¿æŠ¤çš„å­˜å‚¨å—   çŠ¶æ€å¯„å­˜å™¨
+0   X     X     å—ä¿æŠ¤çš„            å—ä¿æŠ¤çš„        å—ä¿æŠ¤çš„
+1   0     X     å—ä¿æŠ¤çš„            æœªå—ä¿æŠ¤çš„      æœªå—ä¿æŠ¤çš„
+1   1     0     å—ä¿æŠ¤çš„            æœªå—ä¿æŠ¤çš„      å—ä¿æŠ¤çš„
+1   1     1     å—ä¿æŠ¤çš„            æœªå—ä¿æŠ¤çš„      æœªå—ä¿æŠ¤çš„
 
-0x00 È¡Ïû±£»¤ 0x84 ±£»¤ºó1/4
+0x00 å–æ¶ˆä¿æŠ¤ 0x84 ä¿æŠ¤åŽ1/4
 */
 uint8_t FM25CL64_SR(uint8_t byte)
 {

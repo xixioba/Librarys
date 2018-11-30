@@ -86,12 +86,12 @@ uint8_t DS1302_R(uint8_t addr)
     return data;
 }
 
-void DS1302_INIT(void)//ÎŞĞèÊ¹ÓÃ
+void DS1302_INIT(void)//æ— éœ€ä½¿ç”¨
 {
-    DS1302_W(0x8e,0x00); //¿ØÖÆĞ´ÈëWP=0
-    DS1302_W(0x90,0xa5); //ä¸µçÁ÷
-    DS1302_W(0x80,0x00);//¾§ÕñÆôÕñ
-    DS1302_W(0x8e,0x80); //¿ØÖÆĞ´ÈëWP=1	
+    DS1302_W(0x8e,0x00); //æ§åˆ¶å†™å…¥WP=0
+    DS1302_W(0x90,0xa5); //æ¶“ç”µæµ
+    DS1302_W(0x80,0x00);//æ™¶æŒ¯å¯æŒ¯
+    DS1302_W(0x8e,0x80); //æ§åˆ¶å†™å…¥WP=1	
 }
 
 void DS1302_SET(void)
@@ -104,31 +104,31 @@ void DS1302_SET(void)
     DS1302_W(0x88,((time.M/10)<<4|(time.M%10)));
     DS1302_W(0x8A,((time.W/10)<<4|(time.W%10)));
     DS1302_W(0x8C,((time.Y/10)<<4|(time.Y%10)));    
-    //DS1302_W(0x80,0x00);//¾§ÕñÆôÕñ
-    DS1302_W(0x8e,0x80); //¿ØÖÆĞ´ÈëWP=1	
+    //DS1302_W(0x80,0x00);//æ™¶æŒ¯å¯æŒ¯
+    DS1302_W(0x8e,0x80); //æ§åˆ¶å†™å…¥WP=1	
 }
 
 void DS1302_READ(void)
 {
 
-    time.s=DS1302_R(0x81);	//Ãë
-    time.m=DS1302_R(0x83);	//·Ö
-    time.h=DS1302_R(0x85);	 	//Ê±
-    time.D=DS1302_R(0x87);	  	//ÈÕ
-    time.M=DS1302_R(0x89); 	//ÔÂ 
-    time.W=DS1302_R(0x8b);		//ĞÇÆÚ
-    time.Y=DS1302_R(0x8d);      //Äê  
+    time.s=DS1302_R(0x81);	//ç§’
+    time.m=DS1302_R(0x83);	//åˆ†
+    time.h=DS1302_R(0x85);	 	//æ—¶
+    time.D=DS1302_R(0x87);	  	//æ—¥
+    time.M=DS1302_R(0x89); 	//æœˆ 
+    time.W=DS1302_R(0x8b);		//æ˜ŸæœŸ
+    time.Y=DS1302_R(0x8d);      //å¹´  
 }
 
 void DS1302_TIME(uint16_t Y,uint16_t M,uint16_t D,uint16_t h,uint16_t m,uint16_t s)
 {
-    time.s=s;	//Ãë
-    time.m=m;	//·Ö
-    time.h=h;	 	//Ê±
-    time.D=D;	  	//ÈÕ
-    time.M=M; 	//ÔÂ 
-    //time.W=W;		//ĞÇÆÚ
-    time.Y=Y;      //Äê 
+    time.s=s;	//ç§’
+    time.m=m;	//åˆ†
+    time.h=h;	 	//æ—¶
+    time.D=D;	  	//æ—¥
+    time.M=M; 	//æœˆ 
+    //time.W=W;		//æ˜ŸæœŸ
+    time.Y=Y;      //å¹´ 
     DS1302_SET();
 }
 void DS1302_MSG(void)

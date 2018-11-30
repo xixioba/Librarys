@@ -21,12 +21,12 @@ static HAL_StatusTypeDef Check_EEPROM_Status(uint16_t DevAddress)
 }    
 
 /**
-  * º¯Êı¹¦ÄÜ: Í¨¹ıI2CĞ´ÈëÒ»¸öÖµµ½Ö¸¶¨¼Ä´æÆ÷ÄÚ
-  * ÊäÈë²ÎÊı: DevAddress£ºI2CÉè±¸µØÖ·
-  *           MemAddress£ºÄ¿±ê¼Ä´æÆ÷
-  *           Value£ºÖµ
-  * ·µ »Ø Öµ: ÎŞ
-  * Ëµ    Ã÷: ÎŞ
+  * å‡½æ•°åŠŸèƒ½: é€šè¿‡I2Cå†™å…¥ä¸€ä¸ªå€¼åˆ°æŒ‡å®šå¯„å­˜å™¨å†…
+  * è¾“å…¥å‚æ•°: DevAddressï¼šI2Cè®¾å¤‡åœ°å€
+  *           MemAddressï¼šç›®æ ‡å¯„å­˜å™¨
+  *           Valueï¼šå€¼
+  * è¿” å› å€¼: æ— 
+  * è¯´    æ˜: æ— 
   */
 HAL_StatusTypeDef I2C_EEPROM_WriteByte( uint8_t MemAddress, uint8_t Value,uint16_t DevAddress,uint16_t MemAddSize)
 {
@@ -38,14 +38,14 @@ HAL_StatusTypeDef I2C_EEPROM_WriteByte( uint8_t MemAddress, uint8_t Value,uint16
 }
 
 /**
-  * º¯Êı¹¦ÄÜ: Í¨¹ıI2CĞ´ÈëÒ»¶ÎÊı¾İµ½Ö¸¶¨¼Ä´æÆ÷ÄÚ
-  * ÊäÈë²ÎÊı: DevAddress£ºI2CÉè±¸µØÖ·
-  *           MemAddress£ºÄ¿±ê¼Ä´æÆ÷
-  *           MemAddSize£º¼Ä´æÆ÷³ß´ç(8Î»»òÕß16Î»)
-  *           pBuffer£º»º³åÇøÖ¸Õë
-  *           Length£º»º³åÇø³¤¶È
-  * ·µ »Ø Öµ: HAL_StatusTypeDef£º²Ù×÷½á¹û
-  * Ëµ    Ã÷: ÔÚÑ­»·µ÷ÓÃÊÇĞè¼ÓÒ»¶¨ÑÓÊ±Ê±¼ä
+  * å‡½æ•°åŠŸèƒ½: é€šè¿‡I2Cå†™å…¥ä¸€æ®µæ•°æ®åˆ°æŒ‡å®šå¯„å­˜å™¨å†…
+  * è¾“å…¥å‚æ•°: DevAddressï¼šI2Cè®¾å¤‡åœ°å€
+  *           MemAddressï¼šç›®æ ‡å¯„å­˜å™¨
+  *           MemAddSizeï¼šå¯„å­˜å™¨å°ºå¯¸(8ä½æˆ–è€…16ä½)
+  *           pBufferï¼šç¼“å†²åŒºæŒ‡é’ˆ
+  *           Lengthï¼šç¼“å†²åŒºé•¿åº¦
+  * è¿” å› å€¼: HAL_StatusTypeDefï¼šæ“ä½œç»“æœ
+  * è¯´    æ˜: åœ¨å¾ªç¯è°ƒç”¨æ˜¯éœ€åŠ ä¸€å®šå»¶æ—¶æ—¶é—´
   */
 HAL_StatusTypeDef  I2C_EEPROM_Write(uint8_t MemAddress,uint8_t *pBuffer,uint16_t DevAddress, uint16_t MemAddSize)
 {
@@ -55,14 +55,14 @@ HAL_StatusTypeDef  I2C_EEPROM_Write(uint8_t MemAddress,uint8_t *pBuffer,uint16_t
 
 
 /**
-  * º¯Êı¹¦ÄÜ: Í¨¹ıI2C¶ÁÈ¡Ò»¶Î¼Ä´æÆ÷ÄÚÈİ´æ·Åµ½Ö¸¶¨µÄ»º³åÇøÄÚ
-  * ÊäÈë²ÎÊı: DevAddress£ºI2CÉè±¸µØÖ·
-  *           MemAddress£ºÄ¿±ê¼Ä´æÆ÷
-  *           MemAddSize£º¼Ä´æÆ÷³ß´ç(8Î»»òÕß16Î»)
-  *           pBuffer£º»º³åÇøÖ¸Õë
-  *           Length£º»º³åÇø³¤¶È
-  * ·µ »Ø Öµ: HAL_StatusTypeDef£º²Ù×÷½á¹û
-  * Ëµ    Ã÷: ÎŞ
+  * å‡½æ•°åŠŸèƒ½: é€šè¿‡I2Cè¯»å–ä¸€æ®µå¯„å­˜å™¨å†…å®¹å­˜æ”¾åˆ°æŒ‡å®šçš„ç¼“å†²åŒºå†…
+  * è¾“å…¥å‚æ•°: DevAddressï¼šI2Cè®¾å¤‡åœ°å€
+  *           MemAddressï¼šç›®æ ‡å¯„å­˜å™¨
+  *           MemAddSizeï¼šå¯„å­˜å™¨å°ºå¯¸(8ä½æˆ–è€…16ä½)
+  *           pBufferï¼šç¼“å†²åŒºæŒ‡é’ˆ
+  *           Lengthï¼šç¼“å†²åŒºé•¿åº¦
+  * è¿” å› å€¼: HAL_StatusTypeDefï¼šæ“ä½œç»“æœ
+  * è¯´    æ˜: æ— 
   */
 uint8_t I2C_EEPROM_Read(uint8_t MemAddress,uint8_t *pBuffer,uint16_t Length,uint16_t DevAddress, uint16_t MemAddSize)
 {
@@ -75,11 +75,11 @@ uint8_t I2C_EEPROM_Read(uint8_t MemAddress,uint8_t *pBuffer,uint16_t Length,uint
 }
 
 /**
-  * º¯Êı¹¦ÄÜ: ¼ì²âI2CÉè±¸ÊÇ·ñ´¦ÓÚ×¼±¸ºÃ¿ÉÒÔÍ¨ĞÅ×´Ì¬
-  * ÊäÈë²ÎÊı: DevAddress£ºI2CÉè±¸µØÖ·
-  *           Trials£º³¢ÊÔ²âÊÔ´ÎÊı
-  * ·µ »Ø Öµ: HAL_StatusTypeDef£º²Ù×÷½á¹û
-  * Ëµ    Ã÷: ÎŞ
+  * å‡½æ•°åŠŸèƒ½: æ£€æµ‹I2Cè®¾å¤‡æ˜¯å¦å¤„äºå‡†å¤‡å¥½å¯ä»¥é€šä¿¡çŠ¶æ€
+  * è¾“å…¥å‚æ•°: DevAddressï¼šI2Cè®¾å¤‡åœ°å€
+  *           Trialsï¼šå°è¯•æµ‹è¯•æ¬¡æ•°
+  * è¿” å› å€¼: HAL_StatusTypeDefï¼šæ“ä½œç»“æœ
+  * è¯´    æ˜: æ— 
   */
 __inline HAL_StatusTypeDef I2C_EEPROM_IsDeviceReady(uint16_t DevAddress, uint32_t Trials)
 { 
@@ -89,8 +89,8 @@ __inline HAL_StatusTypeDef I2C_EEPROM_IsDeviceReady(uint16_t DevAddress, uint32_
 void WriteEEPROMTest(uint16_t Number,uint8_t t )
 {
     uint16_t i;
-     printf("´ıĞ´ÈëµÄÊı¾İ:\n");    
-	for ( i=0; i<Number; i++ ) //Ìî³ä»º³å
+     printf("å¾…å†™å…¥çš„æ•°æ®:\n");    
+	for ( i=0; i<Number; i++ ) //å¡«å……ç¼“å†²
   {
     I2c_Buf_Write[i]=t;
     printf("0x%02X ", I2c_Buf_Write[i]);
@@ -100,7 +100,7 @@ void WriteEEPROMTest(uint16_t Number,uint8_t t )
   for(i=0;i<Number;i+=8)
   {
     I2C_EEPROM_Write(i,&I2c_Buf_Write[i]);
-    HAL_Delay(5);// ¶ÌÑÓÊ±²»ÄÜÉÙ
+    HAL_Delay(5);// çŸ­å»¶æ—¶ä¸èƒ½å°‘
   }
     
 }
@@ -108,7 +108,7 @@ void WriteEEPROMTest(uint16_t Number,uint8_t t )
 void ReadEEPROMTest(uint16_t Number)
 {
     uint16_t i;
-      printf("¶Á³öµÄÊı¾İ:\n");
+      printf("è¯»å‡ºçš„æ•°æ®:\n");
    I2C_EEPROM_Read(0,&I2c_Buf_Read[0],Number);
    for (i=0;i<Number;i++)
 	 {    

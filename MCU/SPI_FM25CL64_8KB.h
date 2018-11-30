@@ -9,12 +9,12 @@
 #define FM25CL64_SPI_WP_DISABLE()         HAL_GPIO_WritePin(FM25CL64_WPx_GPIO_Port, FM25CL64_WPx_Pin, GPIO_PIN_SET);
 
 
-#define FM25CL64_WREN 0x06//ÉèÖÃĞ´Ê¹ÄÜËø´æÆ÷0000 0110b
-#define FM25CL64_WRDI 0x04//Ğ´½ûÖ¹0000 0100b
-#define FM25CL64_RDSR 0x05//¶Á×´Ì¬¼Ä´æÆ÷0000 0101b
-#define FM25CL64_WRSR 0x01//Ğ´×´Ì¬¼Ä´æÆ÷0000 0001b
-#define FM25CL64_READ 0x03//¶Á´æ´¢Æ÷Êı¾İ0000 0011b
-#define FM25CL64_WRITE 0x02//Ğ´´æ´¢Æ÷Êı¾İ0000 0010b
+#define FM25CL64_WREN 0x06//è®¾ç½®å†™ä½¿èƒ½é”å­˜å™¨0000 0110b
+#define FM25CL64_WRDI 0x04//å†™ç¦æ­¢0000 0100b
+#define FM25CL64_RDSR 0x05//è¯»çŠ¶æ€å¯„å­˜å™¨0000 0101b
+#define FM25CL64_WRSR 0x01//å†™çŠ¶æ€å¯„å­˜å™¨0000 0001b
+#define FM25CL64_READ 0x03//è¯»å­˜å‚¨å™¨æ•°æ®0000 0011b
+#define FM25CL64_WRITE 0x02//å†™å­˜å‚¨å™¨æ•°æ®0000 0010b
 
 extern SPI_HandleTypeDef hspi3;
 

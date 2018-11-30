@@ -22,14 +22,14 @@ FRESULT SD_Test()
 
 
 /**
-  * º¯Êı¹¦ÄÜ: ´ÓSD¿¨¶ÁÈ¡GBKÂë
-  * ÊäÈë²ÎÊı: pBuffer£ºÊı¾İ±£´æµØÖ·
-  *           gbk £ººº×Ö×Ö·ûµÍ×Ö½ÚÂë
-  *           font£º×ÖÌåÑ¡Ôñ
-  *           ¿ÉÑ¡Öµ£ºUSE_FONT_16 £º16ºÅ×ÖÌå
-  *                   USE_FONT_24 £º24ºÅ×ÖÌå 
-  * ·µ »Ø Öµ: uint8_t: 0:¶ÁÈ¡Ê§°Ü£¬1£º¶ÁÈ¡³É¹¦
-  * Ëµ    Ã÷£ºÊ¹ÓÃ¸Ãº¯ÊıÖ®Ç°È·±£ÒÑÔËĞĞÁËf_mount(&fs,"0:",1);³ÌĞò¡£
+  * å‡½æ•°åŠŸèƒ½: ä»SDå¡è¯»å–GBKç 
+  * è¾“å…¥å‚æ•°: pBufferï¼šæ•°æ®ä¿å­˜åœ°å€
+  *           gbk ï¼šæ±‰å­—å­—ç¬¦ä½å­—èŠ‚ç 
+  *           fontï¼šå­—ä½“é€‰æ‹©
+  *           å¯é€‰å€¼ï¼šUSE_FONT_16 ï¼š16å·å­—ä½“
+  *                   USE_FONT_24 ï¼š24å·å­—ä½“ 
+  * è¿” å› å€¼: uint8_t: 0:è¯»å–å¤±è´¥ï¼Œ1ï¼šè¯»å–æˆåŠŸ
+  * è¯´    æ˜ï¼šä½¿ç”¨è¯¥å‡½æ•°ä¹‹å‰ç¡®ä¿å·²è¿è¡Œäº†f_mount(&fs,"0:",1);ç¨‹åºã€‚
   */
 uint8_t GetGBKCode_SD(uint8_t * pBuffer,const uint16_t Char)
 {
@@ -58,12 +58,12 @@ uint8_t GetGBKCode_SD(uint8_t * pBuffer,const uint16_t Char)
             LCD_Show(160,20,"NO ATTACHERDRIVERS\n");
     }
 
-    // 16*16´óĞ¡µÄºº×Ö Æä×ÖÄ£ Õ¼ÓÃ16*16/8¸ö×Ö½Ú
+    // 16*16å¤§å°çš„æ±‰å­— å…¶å­—æ¨¡ å ç”¨16*16/8ä¸ªå­—èŠ‚
     pos=((high8bit-0xa1)*94+low8bit-0xa1)*16*16/8;
     fres=f_open(&file,"0:/GBK_1616.FON",FA_OPEN_EXISTING|FA_READ);
   if(fres == FR_OK ) 
   {
-    f_lseek (&file, pos);		//Ö¸ÕëÆ«ÒÆ
+    f_lseek (&file, pos);		//æŒ‡é’ˆåç§»
     fres=f_read(&file,pBuffer,32,&fnum); 
     f_close(&file);      
     return 1;  

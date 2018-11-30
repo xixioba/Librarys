@@ -29,19 +29,19 @@ eMBErrorCode eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRe
 
 eMBErrorCode eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,eMBRegisterMode eMode )
 {
-    //´íÎó×´Ì¬
+    //é”™è¯¯çŠ¶æ€
     eMBErrorCode eStatus = MB_ENOERR;
-    //Æ«ÒÆÁ¿
+    //åç§»é‡
     int16_t iRegIndex;
     printf("eMBRegHoldingCB\n");
-    //ÅÐ¶Ï¼Ä´æÆ÷ÊÇ²»ÊÇÔÚ·¶Î§ÄÚ
+    //åˆ¤æ–­å¯„å­˜å™¨æ˜¯ä¸æ˜¯åœ¨èŒƒå›´å†…
     if( ( (int16_t)usAddress >= REG_HOLDING_START )&&( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-    //¼ÆËãÆ«ÒÆÁ¿
+    //è®¡ç®—åç§»é‡
         iRegIndex = ( int16_t )( usAddress - REG_HOLDING_START);
         switch ( eMode )
         {
-        //¶Á´¦Àíº¯Êý 
+        //è¯»å¤„ç†å‡½æ•° 
         case MB_REG_READ:
             while( usNRegs > 0 )
                 {
@@ -51,7 +51,7 @@ eMBErrorCode eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usN
                     usNRegs--;
                 }
             break;
-        //Ð´´¦Àíº¯Êý 
+        //å†™å¤„ç†å‡½æ•° 
         case MB_REG_WRITE:
             while( usNRegs > 0 )
                 {
@@ -86,7 +86,7 @@ void RS485_MSG(void)
     static uint8_t state_485=0;
     uint16_t i=0,temp[2];
     eMBErrorCode    eStatus;
-    if(system.OnOff_485==1&&state_485==0)//´ò¿ª
+    if(system.OnOff_485==1&&state_485==0)//æ‰“å¼€
     {
         state_485=1;
         eStatus = eMBInit( MB_RTU, system.Addr_485, 1, system.Bps_485, MB_PAR_NONE);
@@ -95,7 +95,7 @@ void RS485_MSG(void)
         for(i=0;i<200;i++)
             usRegInputBuf[i]=0;
     }
-    else if(system.OnOff_485==0&&state_485==1)//¹Ø±Õ
+    else if(system.OnOff_485==0&&state_485==1)//å…³é—­
     {
         state_485=0;
         eStatus=eMBDisable();
@@ -106,7 +106,7 @@ void RS485_MSG(void)
         eStatus = eMBInit( MB_RTU, system.Addr_485, 1, system.Bps_485, MB_PAR_NONE);
         eStatus = eMBEnable(  );
     }
-    if(system.OnOff_485==1&&state_485==1)//´¦ÀíÊý¾Ý
+    if(system.OnOff_485==1&&state_485==1)//å¤„ç†æ•°æ®
     {
         Decimals_IEE754(measure.CY,&usRegHoldingBuf[1],4);
         Decimals_IEE754(measure.YL,&usRegHoldingBuf[3],4);

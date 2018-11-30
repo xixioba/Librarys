@@ -54,8 +54,8 @@ static uint8_t ReadInfraRed(uint8_t *Arr)
 
 uint16_t ReadIFR(void)
 {
-    static uint8_t status2;//ÅĞ¶ÏÊÇ·ñÓĞÄÚÈİ
-    static uint8_t count;//ÅĞ¶ÏÊÇ·ñ³¬Ê±£¬³¬Ê±Çå¿Õ
+    static uint8_t status2;//åˆ¤æ–­æ˜¯å¦æœ‰å†…å®¹
+    static uint8_t count;//åˆ¤æ–­æ˜¯å¦è¶…æ—¶ï¼Œè¶…æ—¶æ¸…ç©º
     uint8_t status;
     uint8_t InfraRed_value[4];
     static uint16_t code;
@@ -71,7 +71,7 @@ uint16_t ReadIFR(void)
         }   
     else if(status==InfradRed_REPEAT)
         {
-//            printf("count=%d\n",count); ¼ì²âÖØ¸´ÃüÁî¼ä¸ô
+//            printf("count=%d\n",count); æ£€æµ‹é‡å¤å‘½ä»¤é—´éš”
             if(status2==1)
             {
                 count=0;                            

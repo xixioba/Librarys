@@ -26,11 +26,11 @@ extern uint16_t   usRegInputBuf[REG_INPUT_NREGS];
 extern uint16_t   usRegHoldingBuf[REG_HOLDING_NREGS];
 void RS485_MSG(void);
 /*
-    RS485ÒÆÖ²freemodbus 
-    1.ÒÆÖ²ËùÓĞÎÄ¼ş£¬ĞŞREG_INPUT_NREGS¼Ä´æÆ÷ÊıÁ¿
-    2.ĞŞ¸ÄËùÓÃUSART£¨ÖĞ¶ÏÄ£Ê½£©,TIM
-    3.ITÖĞ¶Ïº¯ÊıÌí¼ÓUSARTº¯Êı*2£¨RXNE,TXE)£¬TIMº¯Êı*1
-    4.TIM.PSC=3599;ÖĞ¶ÏÄ£Ê½ reset
+    RS485ç§»æ¤freemodbus 
+    1.ç§»æ¤æ‰€æœ‰æ–‡ä»¶ï¼Œä¿®REG_INPUT_NREGSå¯„å­˜å™¨æ•°é‡
+    2.ä¿®æ”¹æ‰€ç”¨USARTï¼ˆä¸­æ–­æ¨¡å¼ï¼‰,TIM
+    3.ITä¸­æ–­å‡½æ•°æ·»åŠ USARTå‡½æ•°*2ï¼ˆRXNE,TXE)ï¼ŒTIMå‡½æ•°*1
+    4.TIM.PSC=3599;ä¸­æ–­æ¨¡å¼ reset
     03,06->holding reg
     04->input reg
 */

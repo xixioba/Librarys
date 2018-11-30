@@ -12,7 +12,7 @@
  * 1 0 1 0 0  0  0  1 = 0XA1 
  */
 #define EEPROM_I2C_ADDRESS                         0xA0
-#define I2C_OWN_ADDRESS                            0x0A              // stm32±æª˙I2Cµÿ÷∑
+#define I2C_OWN_ADDRESS                            0x0A              // stm32Êú¨Êú∫I2CÂú∞ÂùÄ
 
 __inline HAL_StatusTypeDef I2C_EEPROM_IsDeviceReady(uint16_t DevAddress=EEPROM_I2C_ADDRESS, uint32_t Trials=1);
 uint8_t  I2C_EEPROM_Read( uint8_t MemAddress,uint8_t *pBuffer=NULL,uint16_t Length=1,uint16_t DevAddress=EEPROM_I2C_ADDRESS, uint16_t MemAddSize=I2C_MEMADD_SIZE_8BIT);
