@@ -97,9 +97,9 @@ int UDP::Send(char *data,int len=0,char * ip=0,int port=0)
 int UDP::Read(char *data,int len)
 {
 	#ifdef _WIN32
-	int length=sizeof(sockaddr);
+	int length=sizeof(struct sockaddr);
 	#elif __linux__
-	socklen_t length=sizeof(sockaddr);
+	socklen_t length=sizeof(struct sockaddr);
 	#endif
 	return recvfrom((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr*)&(*(udp_ptr *)ptr).udp,&length);	
 }
@@ -177,9 +177,9 @@ int TCP::Accept(void)
 {
 	struct sockaddr_in client;
 	#ifdef _WIN32
-	int length=sizeof(sockaddr);
+	int length=sizeof(struct sockaddr);
 	#elif __linux__
-	socklen_t length=sizeof(sockaddr);
+	socklen_t length=sizeof(struct sockaddr);
 	#endif
 	return accept((*(tcp_ptr *)ptr).sock, (struct sockaddr*)&client, &length);
 }
