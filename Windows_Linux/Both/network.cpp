@@ -157,7 +157,7 @@ int TCP::Accept(void)
 	#endif
 	return accept((*(tcp_ptr *)ptr).sock, (struct sockaddr*)&client, &length);
 }
-int TCP::Connect(int port,char *ip) 
+int TCP::Connect(char *ip,int port) 
 {
 	(*(tcp_ptr *)ptr).tcp.sin_port=htons(port);
 	(*(tcp_ptr *)ptr).tcp.sin_addr.s_addr=inet_addr(ip);

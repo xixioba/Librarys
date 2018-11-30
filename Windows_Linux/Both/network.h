@@ -21,7 +21,7 @@ public:
 	int Bind(int port);
 	int Listen(int max);
 	int Accept(void);
-	int Connect(int port,char *ip);
+	int Connect(char *ip,int port);
 	int Send(int fd,char *data,int len);
 	int Read(int fd,char *data,int len);
 };
