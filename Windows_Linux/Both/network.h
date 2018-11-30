@@ -8,7 +8,7 @@ public:
 	UDP(int port);//para port:No Specify--Client or Specify--Server(auto bind)
 	~UDP(void);
 	int Bind(int port);
-	int Send(char *data,int len,char * ip,int port);
+	int Send(char *data,int len,char * ip,int port);//default:len=0,ip:save first given,port:save first given
 	int Read(char *data,int len);
 	int NoBlock(void);
 	int Block(void);
@@ -24,7 +24,7 @@ public:
 	int Listen(int max);
 	int Accept(void);
 	int Connect(char *ip,int port);
-	int Send(int fd,char *data,int len);
+	int Send(int fd,char *data,int len);//default:len=0(auto caculate strlen)
 	int Read(int fd,char *data,int len);
 	int NoBlock(void);
 	int Block(void);

@@ -23,6 +23,7 @@
 	#include <pthread.h>  
 	#include <net/if.h>
 	#include <errno.h>
+	#include <fcntl.h>
 #else
 	#   error "Unknown compiler"
 #endif
@@ -70,7 +71,7 @@ int UDP::Bind(int port)
 	(*(udp_ptr *)ptr).udp.sin_addr.s_addr=htonl(INADDR_ANY);
 	return bind((*(udp_ptr *)ptr).sock,(struct sockaddr *)&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
 }
-int UDP::Send(char *data,int len,char * ip=0,int port=0)
+int UDP::Send(char *data,int len=0,char * ip=0,int port=0)
 {
 	if(port!=0)
 	{
@@ -88,6 +89,9 @@ int UDP::Send(char *data,int len,char * ip=0,int port=0)
 		if((*(udp_ptr *)ptr).udp.sin_addr.s_addr==0)
 			return -1;
 	}
+	if(len==0)
+	return sendto((*(udp_ptr *)ptr).sock,data,sizeof(data),0,(struct sockaddr *)&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
+	else
 	return sendto((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr *)&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
 }
 int UDP::Read(char *data,int len)
@@ -101,11 +105,25 @@ int UDP::Read(char *data,int len)
 }
 int UDP::NoBlock(void)
 {
-	return fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);	
+	int ret;
+	#ifdef _WIN32
+	unsigned long nonblocking=1;
+	ret= ioctlsocket((*(udp_ptr *)ptr).sock, FIONBIO, &nonblocking);
+	#elif __linux__
+	ret= fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);
+	#endif
+	return ret;
 }
 int UDP::Block(void)
 {
-	return fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)& ~O_NONBLOCK);	
+	int ret;
+	#ifdef _WIN32
+	unsigned long blocking=0;
+	ret= ioctlsocket((*(udp_ptr *)ptr).sock, FIONBIO, &blocking);
+	#elif __linux__
+	ret= fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)& ~O_NONBLOCK);	
+	#endif
+	return ret;
 }
 
 struct tcp_ptr
@@ -185,9 +203,23 @@ int TCP::Read(int fd,char *data,int len)
 }
 int TCP::NoBlock(void)
 {
-	return fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);	
+	int ret;
+	#ifdef _WIN32
+	unsigned long nonblocking=1;
+	ret= ioctlsocket((*(tcp_ptr *)ptr).sock, FIONBIO, &nonblocking);
+	#elif __linux__
+	ret= fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);
+	#endif
+	return ret;
 }
 int TCP::Block(void)
 {
-	return fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)& ~O_NONBLOCK);	
+	int ret;
+	#ifdef _WIN32
+	unsigned long blocking=0;
+	ret= ioctlsocket((*(tcp_ptr *)ptr).sock, FIONBIO, &blocking);
+	#elif __linux__
+	ret= fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)&~O_NONBLOCK);	
+	#endif
+	return ret;
 }
