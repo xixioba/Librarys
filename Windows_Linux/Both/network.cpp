@@ -99,6 +99,14 @@ int UDP::Read(char *data,int len)
 	#endif
 	return recvfrom((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr*)&(*(udp_ptr *)ptr).udp,&length);	
 }
+int UDP::NoBlock(void)
+{
+	return fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);	
+}
+int UDP::Block(void)
+{
+	return fcntl((*(udp_ptr *)ptr).sock, F_SETFL, fcntl((*(udp_ptr *)ptr).sock, F_GETFL, 0)& ~O_NONBLOCK);	
+}
 
 struct tcp_ptr
 {
@@ -175,4 +183,11 @@ int TCP::Read(int fd,char *data,int len)
 {
 	return recv(fd, data, len, 0);	
 }
-
+int TCP::NoBlock(void)
+{
+	return fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)|O_NONBLOCK);	
+}
+int TCP::Block(void)
+{
+	return fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, fcntl((*(tcp_ptr *)ptr).sock, F_GETFL, 0)& ~O_NONBLOCK);	
+}

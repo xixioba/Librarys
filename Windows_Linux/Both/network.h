@@ -10,6 +10,8 @@ public:
 	int Bind(int port);
 	int Send(char *data,int len,char * ip,int port);
 	int Read(char *data,int len);
+	int NoBlock(void);
+	int Block(void);
 };
 
 class TCP
@@ -24,5 +26,7 @@ public:
 	int Connect(char *ip,int port);
 	int Send(int fd,char *data,int len);
 	int Read(int fd,char *data,int len);
+	int NoBlock(void);
+	int Block(void);
 };
 #endif
