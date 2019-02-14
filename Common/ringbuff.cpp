@@ -6,6 +6,8 @@
 
 using namespace std;
 
+
+
 Ringbuf::Ringbuf(int len)
 {
     Cache.buff=new uint8_t[len];
@@ -13,6 +15,7 @@ Ringbuf::Ringbuf(int len)
     Cache.read=0;
     Cache.write=0;
     Cache.len=len;
+    
 }
 
 Ringbuf::~Ringbuf(void)
