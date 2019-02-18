@@ -1,66 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#ifdef _WIN32
-    #include <Winsock2.h>
-    #include <windows.h>
-    #include <iostream>
-    #include <thread>
-    #define Delay(x) Sleep(1000*x);
-   #ifdef _WIN64
-      //define something for Windows (64-bit only)
-   #else
-      //define something for Windows (32-bit only)
-   #endif
-#elif __linux__
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #include <ctype.h>
-    #include <pthread.h>  
-    #include <net/if.h>
-    #define Delay(x) sleep(x);
-#else
-    #   error "Unknown compiler"
-#endif
-
-#include "sha1.h"
-#include "base64.h"
-#include "network.h"
-// #pragma comment(lib,"ws2_32.lib")
-using namespace std;
-struct WebSocketStreamHeader {
-	unsigned int header_size;				//数据包头大小
-	int mask_offset;					//掩码偏移
-	unsigned int payload_size;				//数据大小
-	bool fin;                                               //帧标记
-	bool masked;					        //掩码
-	unsigned char opcode;					//操作码
-	unsigned char res[3];					
-};
-
-
-enum WS_Status
-{
-    WS_STATUS_CONNECT = 0,
-    WS_STATUS_UNCONNECT = 1,
-};
- 
-enum WS_FrameType
-{
-    WS_EMPTY_FRAME = 0xF0,
-    WS_ERROR_FRAME = 0xF1,
-    WS_TEXT_FRAME   = 0x01,
-    WS_BINARY_FRAME = 0x02,
-    WS_PING_FRAME = 0x09,
-    WS_PONG_FRAME = 0x0A,
-    WS_OPENING_FRAME = 0xF3,
-    WS_CLOSING_FRAME = 0x08
-};
+#include "websocket.h"
 
 /*
 1.握手。 
@@ -68,7 +6,7 @@ client第一次connet连接会发起握手协议，server在recv接收处解析�
 判断如果是websocket的握手协议，那么同样组装好特定格式包头回复给client，建立连接。
 */
 //判断是不是websocket协议
-bool isWSHandShake(std::string &request)
+static bool isWSHandShake(std::string &request)
 {
     size_t i = request.find("GET");
     if(i == std::string::npos){
@@ -78,7 +16,7 @@ bool isWSHandShake(std::string &request)
 }
 
 //如果是，解析握手协议重新组装准备send回复给client
-bool wsHandshake(std::string &request, std::string &response)
+static bool wsHandshake(std::string &request, std::string &response)
 {
     //得到客户端请求信息的key
     std::string tempKey = request;
@@ -115,7 +53,7 @@ bool wsHandshake(std::string &request, std::string &response)
 2.接收client协议解析
 首先解析包头信息
 */
-bool wsReadHeader(char* cData, WebSocketStreamHeader* header)  
+static bool wsReadHeader(char* cData, WebSocketStreamHeader* header)  
 {  
     if (cData == NULL) return false;  
 
@@ -187,7 +125,7 @@ bool wsReadHeader(char* cData, WebSocketStreamHeader* header)
 }
 
 //然后根据包头解析出真实数据
-bool wsDecodeFrame(WebSocketStreamHeader* header, char cbSrcData[], unsigned short wSrcLen, char cbTagData[])
+static bool wsDecodeFrame(WebSocketStreamHeader* header, char cbSrcData[], unsigned short wSrcLen, char cbTagData[])
 {  
     const  char *final_buf = cbSrcData;  
     if (wSrcLen < header->header_size + 1) {  
@@ -209,7 +147,7 @@ bool wsDecodeFrame(WebSocketStreamHeader* header, char cbSrcData[], unsigned sho
 }  
 
 //3.组装server发给client协议
-bool wsEncodeFrame(std::string inMessage, std::string &outFrame, enum WS_FrameType frameType)  
+static bool wsEncodeFrame(std::string inMessage, std::string &outFrame, enum WS_FrameType frameType)  
 {  
     const uint32_t messageLength = inMessage.size();  
     if (messageLength > 32767)  
@@ -250,29 +188,127 @@ bool wsEncodeFrame(std::string inMessage, std::string &outFrame, enum WS_FrameTy
     return true;
 }
 
-int main(int argc, char const *argv[])
+
+
+static char* wsEncodeFrameBytes(char* inMessage,enum WS_FrameType frameType,uint32_t *len=NULL)  
+{  
+    uint32_t messageLength;
+    if(*len==0)
+        messageLength = strlen(inMessage);
+    else
+        messageLength = *len;
+    if (messageLength > 32767)  
+    {  
+        // 暂不支持这么长的数据  
+        return NULL;
+    }  
+    uint8_t payloadFieldExtraBytes = (messageLength <= 0x7d) ? 0 : 2;
+    // header: 2字节, mask位设置为0(不加密), 则后面的masking key无须填写, 省略4字节  
+    uint8_t frameHeaderSize = 2 + payloadFieldExtraBytes;  
+    uint8_t *frameHeader = new uint8_t[frameHeaderSize];
+    memset(frameHeader, 0, frameHeaderSize);  
+
+    // fin位为1, 扩展位为0, 操作位为frameType  
+    frameHeader[0] = static_cast<uint8_t>(0x80 | frameType);  
+
+    // 填充数据长度
+    if (messageLength <= 0x7d)  
+    {  
+        frameHeader[1] = static_cast<uint8_t>(messageLength);  
+    }  
+    else  
+    {  
+        frameHeader[1] = 0x7e;
+        uint16_t len = htons(messageLength);
+        memcpy(&frameHeader[2], &len, payloadFieldExtraBytes);
+    }  
+
+    // 填充数据  
+    uint32_t frameSize = frameHeaderSize + messageLength;
+    char *frame = new char[frameSize + 1];
+    memcpy(frame, frameHeader, frameHeaderSize);  
+    memcpy(frame + frameHeaderSize, inMessage, messageLength);
+    *len=frameSize;
+    delete[] frameHeader;
+    return frame;
+}
+
+int WEBSOCKET::Send(int fd,char *data,uint32_t len)
+{
+    uint32_t length;
+    char *psend;
+    if(fd>0)
+    {
+        if(len==0)
+        {
+            length=strlen(data);
+            psend=wsEncodeFrameBytes(data,WS_TEXT_FRAME,&length); 
+        }
+        else
+        {
+            length=len;
+            psend=wsEncodeFrameBytes(data,WS_BINARY_FRAME,&length);
+        }
+        TCP::Send(fd, psend, length);
+        delete psend;
+        return 0;
+    }
+    return -1;
+}
+
+int WEBSOCKET::Read(int fd,char *data,uint32_t len)
+{
+    if(fd>0)
+    {
+        char *buff=new char[len];
+        len=TCP::Read(fd,buff,len);
+        if(len>0)
+        {
+            WebSocketStreamHeader header;
+            wsReadHeader(buff,&header);
+            wsDecodeFrame(&header,buff,len,data);
+            cout<<data<<" "<<len<<endl;
+        }
+        delete buff;
+        return 0;   
+    }
+    return -1;
+}
+
+int Thread::start()
+{
+    if(pthread_create(&pid,NULL,start_thread,(void *)this) != 0) //´创建一个线程(必须是全局函数)
+    {    
+        return -1; 
+    }    
+    return 0;
+}
+
+void* Thread::start_thread(void *arg) //静态成员函数只能访问静态变量或静态函数，通过传递this指针进行调用
+{
+    Thread *ptr = (Thread *)arg;
+    ptr->run();  //线程的实体是run
+}
+
+void WEBSOCKET::run()
 {
     int len;
     char *buff=new char[1024];
     char *sbuff=new char[1024];
     std::string strout;
-    TCP tcp(5001);
-    
     while(1)
     {
-        int fd=tcp.Accept();
+        int fd=Accept();
         while(fd)
         {
-            cout<<"Accept one"<<endl;
-            len=tcp.Read(fd,buff,1024);
+            len=TCP::Read(fd,buff,1024);
             if(len>0)
             {
                 std::string str = buff;
                 if(isWSHandShake(str)==true)
                 {
                     wsHandshake(str,strout);
-                    strcpy(sbuff, strout.c_str());
-                    tcp.Send(fd,(char *)sbuff,strlen(sbuff));
+                    TCP::Send(fd,(char *)strout.c_str(),strout.size());
                 }
                 else
                     continue;
@@ -280,23 +316,29 @@ int main(int argc, char const *argv[])
             cout<<"connect success"<<endl;
             while(fd)
             {
-                len=tcp.Read(fd,buff,1024);
-                if(len>0)
-                {
-                    WebSocketStreamHeader header;
-                    wsReadHeader(buff,&header);
-                    wsDecodeFrame(&header,buff,len,sbuff);
-                    cout<<sbuff<<" "<<len<<endl;
-                }
-                // cout<<"send msg"<<endl;
-                string msg="hello\n";
-                wsEncodeFrame(msg,strout,WS_TEXT_FRAME);
-                strcpy(sbuff, strout.c_str());
-                tcp.Send(fd,(char *)sbuff,strlen(sbuff));
-                sleep(1);
+                webfd=fd;
+                Read(fd,buff,1024);
             }
-        }       
-        // close(fd);
-    }
-	return 0;
+        }
+    }  
 }
+
+
+// int main(int argc, char const *argv[])
+// {
+//     WEBSOCKET ws(5001);
+//     ws.start();
+//     char str1[]={1,2,3,0,5};
+//     char *str2=(char *)"hello web!";
+//     uint32_t length=5;
+//     while(1)
+//     {
+//         if(ws.webfd>0)
+//         {
+//             ws.Send(ws.webfd,str2);
+//         }
+//         Delay(1);
+
+//     }
+// 	return 0;
+// }

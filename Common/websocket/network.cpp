@@ -41,7 +41,7 @@ struct udp_ptr
 	char *IP;	
 };
 
-UDP::UDP(int port=0)
+UDP::UDP(int port)
 {
 	ptr=new udp_ptr;
 	(*(udp_ptr *)ptr).PORT=port;

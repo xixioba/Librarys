@@ -5,7 +5,7 @@ class UDP
 {
 	void *ptr;
 public:
-	UDP(int port);//para port:No Specify--Client or Specify--Server(auto bind)
+	UDP(int port=0);//para port:No Specify--Client or Specify--Server(auto bind)
 	~UDP(void);
 	int Bind(int port);//para port:auto bind the Specifed port
 	int Send(char *data,int len,char * ip,int port);
