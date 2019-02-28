@@ -190,13 +190,13 @@ static bool wsEncodeFrame(std::string inMessage, std::string &outFrame, enum WS_
 
 
 
-static char* wsEncodeFrameBytes(char* inMessage,enum WS_FrameType frameType,uint32_t *len=NULL)  
+static char* wsEncodeFrameBytes(char* inMessage,enum WS_FrameType frameType,uint32_t *length)  
 {  
     uint32_t messageLength;
-    if(*len==0)
-        messageLength = strlen(inMessage);
+    if(*length==0)
+        messageLength = strlen(inMessage)+1;
     else
-        messageLength = *len;
+        messageLength = *length;
     if (messageLength > 32767)  
     {  
         // 暂不支持这么长的数据  
@@ -228,7 +228,7 @@ static char* wsEncodeFrameBytes(char* inMessage,enum WS_FrameType frameType,uint
     char *frame = new char[frameSize + 1];
     memcpy(frame, frameHeader, frameHeaderSize);  
     memcpy(frame + frameHeaderSize, inMessage, messageLength);
-    *len=frameSize;
+    *length=frameSize;
     delete[] frameHeader;
     return frame;
 }
@@ -242,7 +242,7 @@ int WEBSOCKET::Send(int fd,char *data,uint32_t len)
         if(len==0)
         {
             length=strlen(data);
-            psend=wsEncodeFrameBytes(data,WS_TEXT_FRAME,&length); 
+            psend=wsEncodeFrameBytes(data,WS_TEXT_FRAME,&length);
         }
         else
         {
@@ -267,7 +267,6 @@ int WEBSOCKET::Read(int fd,char *data,uint32_t len)
             WebSocketStreamHeader header;
             wsReadHeader(buff,&header);
             wsDecodeFrame(&header,buff,len,data);
-            cout<<data<<" "<<len<<endl;
         }
         delete buff;
         return 0;   
@@ -295,6 +294,7 @@ void WEBSOCKET::run()
     int len;
     char *buff=new char[1024];
     char *sbuff=new char[1024];
+    readbuff=new char[4096];
     std::string strout;
     while(1)
     {
@@ -317,7 +317,7 @@ void WEBSOCKET::run()
             while(fd)
             {
                 webfd=fd;
-                Read(fd,buff,1024);
+                Read(fd,readbuff,4096);
             }
         }
     }  

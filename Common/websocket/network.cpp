@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-	#include <Winsock2.h>
+    #include <winsock2.h>
 	#include <windows.h>
 	#include <iostream>
 	#include <thread>
@@ -117,7 +117,7 @@ struct tcp_ptr
 	char *IP;
 };
 
-TCP::TCP(int port=0,int listen_max)
+TCP::TCP(int port,int listen_max)
 {
 	ptr=new tcp_ptr;
 	(*(tcp_ptr *)ptr).PORT=port;

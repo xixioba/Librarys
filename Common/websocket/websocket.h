@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-    #include <Winsock2.h>
+    #include <winsock2.h>
     #include <windows.h>
     #include <iostream>
     #include <thread>
@@ -82,6 +82,7 @@ class WEBSOCKET:public Thread,TCP
 {
 	using TCP::TCP;
 public:
+    char *readbuff;
 	int Send(int fd,char *data,uint32_t len=0);
 	int Read(int fd,char *data,uint32_t len);
 	int webfd=0;

@@ -16,7 +16,7 @@ class TCP
 {
 	void *ptr;
 public:
-	TCP(int port,int listen_max=10);//para port:No Specify--Client or Specify--Server(auto bind and listen)
+        TCP(int port=0,int listen_max=10);//para port:No Specify--Client or Specify--Server(auto bind and listen)
 	~TCP(void);
 	int Bind(int port);//开启服务端，指定端口
 	int Listen(int max);
