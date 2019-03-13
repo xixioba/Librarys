@@ -10,6 +10,7 @@ public:
 	int Bind(int port);//para port:auto bind the Specifed port
 	int Send(char *data,int len,char * ip,int port);
 	int Read(char *data,int len);
+	void Block(int state);
 };
 
 class TCP
@@ -24,5 +25,6 @@ public:
 	int Connect(int port,char *ip);
 	int Send(int fd,char *data,int len);
 	int Read(int fd,char *data,int len);
+	void Block(int state);
 };
 #endif

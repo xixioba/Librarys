@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-	#include <Winsock2.h>
+	#include <winsock2.h>
 	#include <windows.h>
 	#include <iostream>
 	#include <thread>
@@ -109,6 +109,15 @@ int UDP::Read(char *data,int len)
 	return recvfrom((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr*)&(*(udp_ptr *)ptr).udp,&length);	
 }
 
+void UDP::Block(int state)
+{
+	int flags  = fcntl((*(udp_ptr *)ptr).sock,F_GETFL,0);
+	if(state==1)
+		fcntl((*(udp_ptr *)ptr).sock, F_SETFL, flags|O_NONBLOCK);
+	else
+		fcntl((*(udp_ptr *)ptr).sock, F_SETFL, flags&~O_NONBLOCK);
+}
+
 struct tcp_ptr
 {
 	struct sockaddr_in tcp;
@@ -203,6 +212,14 @@ int TCP::Send(int fd,char *data,int len)
 int TCP::Read(int fd,char *data,int len)
 {
 	return recv(fd, data, len, 0);	
+}
+void TCP::Block(int state)
+{
+	int flags  = fcntl((*(tcp_ptr *)ptr).sock,F_GETFL,0);
+	if(state==1)
+		fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, flags|O_NONBLOCK);
+	else
+		fcntl((*(tcp_ptr *)ptr).sock, F_SETFL, flags&~O_NONBLOCK);
 }
 
 // int main(int argc, char const *argv[])
