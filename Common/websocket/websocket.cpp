@@ -267,78 +267,49 @@ int WEBSOCKET::Read(int fd,char *data,uint32_t len)
             WebSocketStreamHeader header;
             wsReadHeader(buff,&header);
             wsDecodeFrame(&header,buff,len,data);
+            std::cout<<data<<std::endl;
         }
         delete buff;
-        return 0;   
+        return len;
     }
-    return -1;
-}
-
-int Thread::start()
-{
-    if(pthread_create(&pid,NULL,start_thread,(void *)this) != 0) //´创建一个线程(必须是全局函数)
-    {    
-        return -1; 
-    }    
     return 0;
 }
 
-void* Thread::start_thread(void *arg) //静态成员函数只能访问静态变量或静态函数，通过传递this指针进行调用
+
+WEBSOCKET::WEBSOCKET(int port,int listen)
 {
-    Thread *ptr = (Thread *)arg;
-    ptr->run();  //线程的实体是run
+    TCP::Bind(port);
+    TCP::Listen();
+    std::thread runpool(&WEBSOCKET::run,this);
+    runpool.detach();
 }
 
+WEBSOCKET::~WEBSOCKET()
+{
+
+}
 void WEBSOCKET::run()
 {
     int len;
-    char *buff=new char[1024];
-    char *sbuff=new char[1024];
-    readbuff=new char[4096];
+    char buff[1024];
     std::string strout;
-    while(1)
-    {
-        int fd=Accept();
-        while(fd)
+    while (1) {
+        int webfd=TCP::Accept();
+        while(webfd>0)
         {
-            len=TCP::Read(fd,buff,1024);
+            len=TCP::Read(webfd,buff,1024);
             if(len>0)
             {
                 std::string str = buff;
                 if(isWSHandShake(str)==true)
                 {
                     wsHandshake(str,strout);
-                    TCP::Send(fd,(char *)strout.c_str(),strout.size());
+                    TCP::Send(webfd,(char *)strout.c_str(),strout.size());
+                    webfds.push_back(webfd);
+                    break;
                 }
-                else
-                    continue;
-            }
-            cout<<"connect success"<<endl;
-            while(fd)
-            {
-                webfd=fd;
-                Read(fd,readbuff,4096);
             }
         }
-    }  
+    }
 }
 
-
-// int main(int argc, char const *argv[])
-// {
-//     WEBSOCKET ws(5001);
-//     ws.start();
-//     char str1[]={1,2,3,0,5};
-//     char *str2=(char *)"hello web!";
-//     uint32_t length=5;
-//     while(1)
-//     {
-//         if(ws.webfd>0)
-//         {
-//             ws.Send(ws.webfd,str2);
-//         }
-//         Delay(1);
-
-//     }
-// 	return 0;
-// }

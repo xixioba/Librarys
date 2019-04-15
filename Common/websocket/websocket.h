@@ -1,41 +1,10 @@
 #ifndef __WEBSOCKET_H
 #define __WEBSOCKET_H 
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <windows.h>
-    #include <iostream>
-    #include <thread>
-    #define Delay(x) Sleep(1000*x);
-   #ifdef _WIN64
-      //define something for Windows (64-bit only)
-   #else
-      //define something for Windows (32-bit only)
-   #endif
-#elif __linux__
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #include <ctype.h>
-    #include <pthread.h>  
-    #include <net/if.h>
-    #define Delay(x) sleep(x);
-#else
-    #   error "Unknown compiler"
-#endif
-
 #include "sha1.h"
 #include "base64.h"
 #include "network.h"
-
-using namespace std;
+#include <vector>
 
 struct WebSocketStreamHeader {
 	unsigned int header_size;				//数据包头大小
@@ -46,7 +15,6 @@ struct WebSocketStreamHeader {
 	unsigned char opcode;					//操作码
 	unsigned char res[3];					
 };
-
 
 enum WS_Status
 {
@@ -66,26 +34,15 @@ enum WS_FrameType
     WS_CLOSING_FRAME = 0x08
 };
 
-class Thread
+class WEBSOCKET:public TCP
 {
-    private:
-        pthread_t pid;
-    private:
-        static void * start_thread(void *arg);// //静态成员函数
-    public: 
-        int start();
-        virtual void run() = 0; //基类中的虚函数要么实现，要么是纯虚函数（绝对不允许声明不实现，也不纯虚）
-};
-
-
-class WEBSOCKET:public Thread,TCP
-{
-	using TCP::TCP;
+    using TCP::TCP;
 public:
-    char *readbuff;
-	int Send(int fd,char *data,uint32_t len=0);
+    std::vector<int> webfds;
+    WEBSOCKET(int port=0,int listen=10);
+    ~WEBSOCKET();
+    int Send(int fd,char *data,uint32_t len=0);//len==0->string len>0==>byte
 	int Read(int fd,char *data,uint32_t len);
-	int webfd=0;
     void run();
 };
 
