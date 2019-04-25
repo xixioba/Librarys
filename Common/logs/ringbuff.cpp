@@ -1,12 +1,6 @@
-#include <iostream>
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include "ringbuff.h"
+﻿#include "ringbuff.h"
 
 using namespace std;
-
-
 
 Ringbuf::Ringbuf(int len)
 {
@@ -15,7 +9,6 @@ Ringbuf::Ringbuf(int len)
     Cache.read=0;
     Cache.write=0;
     Cache.len=len;
-    
 }
 
 Ringbuf::~Ringbuf(void)

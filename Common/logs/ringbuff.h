@@ -1,5 +1,6 @@
 ﻿#ifndef __RINGBUFF_H
 #define __RINGBUFF_H
+#include <iostream>
 #include "stdint.h"
 //面向过程编程
 void ringbuff_init(int len);
