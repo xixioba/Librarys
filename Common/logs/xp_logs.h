@@ -4,11 +4,13 @@
 #ifdef linux
 #include <unistd.h>
 #include <dirent.h>
+#include<sys/stat.h>
+#include<sys/types.h>
 #endif
 #ifdef WIN32
-#include "dirent.h"
 #include <direct.h>
 #include <io.h>
+#include "dirent.h"
 #endif
 #include "ringbuff.h"
 class xp_logs
@@ -16,10 +18,10 @@ class xp_logs
     Ringbuf *cachebuff;
     int Cachesize;
     char logpath[512];
-    int maxtotalsize=10*1024*1024;//单位 K
-    int maxlogsize=1*1024*1024;//单位 K
+    int maxtotalsize=50*1024*1024;//单位 K
+    int maxlogsize=30*1024*1024;//单位 K
 public:
-    xp_logs(char *path,int cachesize=0);//单位BYTE,cachesize=0,普通模式，cachesize>0,启用cachepool，数据将存入缓存中，稍后自动写入,保证缓存大小可靠，减少丢包
+    xp_logs(char *path,int cachesize=4*1024*1024);//单位BYTE,cachesize=0,普通模式，cachesize>0,启用cachepool，数据将存入缓存中，稍后自动写入,保证缓存大小可靠，减少丢包
     ~xp_logs();
     int add(char *str,int len=0);//len==0,写入字符串，len>0，写入char *数组
     int get_size(char *filename);//获取文件大小

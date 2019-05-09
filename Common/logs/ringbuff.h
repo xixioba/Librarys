@@ -1,7 +1,8 @@
 ﻿#ifndef __RINGBUFF_H
 #define __RINGBUFF_H
 #include <iostream>
-#include "stdint.h"
+#include <stdint.h>
+#include <string.h>
 //面向过程编程
 void ringbuff_init(int len);
 int ringbuff_canwrite(void);
