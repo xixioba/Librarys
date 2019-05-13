@@ -5,6 +5,7 @@
 #include "base64.h"
 #include "network.h"
 #include <vector>
+#include <thread>
 
 struct WebSocketStreamHeader {
 	unsigned int header_size;				//数据包头大小

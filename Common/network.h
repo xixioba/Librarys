@@ -1,19 +1,17 @@
-#ifndef __NETWORK_
+﻿#ifndef __NETWORK_
 #define __NETWORK_
 //mingw:add -lwsock32 for opject
 
-#define _MSVC 1
-
 #ifdef _WIN32
-    #include <winsock.h>
     #include <Windows.h>
-    #if _MSVC
+    #include <winsock.h>
+    #ifdef _MSC_VER
         #pragma comment(lib,"ws2_32.lib")
-        #define close closesocket
     #endif
     #include <iostream>
     #include <thread>
     #define Delay(x) Sleep(1000*x);
+    #define Delayms(x) Sleep(x);
    #ifdef _WIN64
       //define something for Windows (64-bit only)
    #else
@@ -29,7 +27,9 @@
     #include <ctype.h>
     #include <pthread.h>
     #include <net/if.h>
+    #include <unistd.h>
     #define Delay(x) sleep(x);
+    #define Delayms(x) usleep(x*1000);
 #else
     #   error "Unknown compiler"
 #endif
@@ -38,26 +38,26 @@
 #include <stdlib.h>
 class UDP
 {
-	void *ptr;
+    void *ptr;
 public:
-	UDP(void);
-	~UDP(void);
-	int Bind(int port);
-	int Send(char *data,int len,char * ip,int port);
-	int Read(char *data,int len);
+    UDP(void);
+    ~UDP(void);
+    int Bind(int port);
+    int Send(char *data,int len,char * ip,int port);
+    int Read(char *data,int len);
 };
 
 class TCP
 {
-	void *ptr;
+    void *ptr;
 public:
     TCP(void);
-	~TCP(void);
-	int Bind(int port);
-	int Listen(int max=5);
-	int Accept();
-	int Connect(int port,char *ip);
-	int Send(int fd,char *data,int len);
-	int Read(int fd,char *data,int len);
+    ~TCP(void);
+    int Bind(int port);
+    int Listen(int max=5);
+    int Accept();
+    int Connect(int port,char *ip);
+    int Send(int fd,char *data,int len);
+    int Read(int fd,char *data,int len);
 };
 #endif

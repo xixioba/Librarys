@@ -1,18 +1,30 @@
 ﻿#ifndef XP_LOGS_H
 #define XP_LOGS_H
 #include <time.h>
-#ifdef linux
-#include <unistd.h>
-#include <dirent.h>
-#include<sys/stat.h>
-#include<sys/types.h>
+#ifdef _WIN32
+    #include <direct.h>
+    #include <io.h>
+    #include "dirent.h"
+    #define Delay(x) Sleep(1000*x);
+    #define Delayms(x) Sleep(x);
+   #ifdef _WIN64
+      //define something for Windows (64-bit only)
+   #else
+      //define something for Windows (32-bit only)
+   #endif
+#elif defined  __linux__
+    #include <unistd.h>
+    #include <dirent.h>
+    #include<sys/stat.h>
+    #include<sys/types.h>
+    #define Delay(x) sleep(x);
+    #define Delayms(x) usleep(x*1000);
+#else
+    #   error "Unknown compiler"
 #endif
-#ifdef WIN32
-#include <direct.h>
-#include <io.h>
-#include "dirent.h"
-#endif
+
 #include "ringbuff.h"
+
 class xp_logs
 {
     Ringbuf *cachebuff;

@@ -267,7 +267,6 @@ int WEBSOCKET::Read(int fd,char *data,uint32_t len)
             WebSocketStreamHeader header;
             wsReadHeader(buff,&header);
             wsDecodeFrame(&header,buff,len,data);
-            std::cout<<data<<std::endl;
         }
         delete buff;
         return len;

@@ -32,12 +32,8 @@ void xp_logs::cachepool(void)
             num=cachebuff->read(readbuff,n);
             this->add((char *)readbuff,n);
             delete [] readbuff;
-#ifdef _WIN32
-            Sleep(1000);
-#elif defined __linux__
-            sleep(1);
-#endif
         }
+        Delay(1);
     }
     cachebuff->~Ringbuf();
 }

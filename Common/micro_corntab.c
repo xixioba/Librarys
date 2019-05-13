@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/time.h>
-#include <windows.h>
+#include "micro_corntab.h"
+
 #define debug 0
 
 int help(int argc,...)
@@ -27,43 +22,23 @@ int test(int argc,...)
 	return 0;
 }
 
-struct corntab_data
-{
-	uint8_t weekday;
-	uint32_t monthday;
-	uint32_t hour;
-	uint64_t minute;	
-	uint64_t second;
-}corntab_list,corntab_aim;
+corntab_data corntab_list,corntab_aim;
 
-struct Command 
+Func funcs[]=
 {
-	const char *name;
-	const char *desc;
-	int (*func)(int argc,...);
-	struct corntab_data date;
+	{help,"help","char *,char *"},//... || 3 int float int || int
+	{feed,"feed","int,..."},
+	{test,"test","int,..."},
 };
 
-struct Command commands[] = {
+Command commands[] = {
 { "help(10.0)", "Display this list of commands",help},
 { "feed(3,int)", "Display this list of commands",feed},
 // { "kerninfo", "Display information about the kernel", mon_kerninfo },
 // { "backtrace", "Display the current stack trace", mon_backtrace },
 };
 
-struct Func
-{
-	int (*func)(int argc,...);
-	const char *name;
-	const char *paras;
-};
 
-struct Func funcs[]=
-{
-	{help,"help","char *,char *"},//... || 3 int float int || int
-	{feed,"feed","int,..."},
-	{test,"test","int,..."},
-};
 
 int paras_valid(const char *src,char *target) //ruler_type[int,float,double,char *] target_paras
 {
@@ -732,7 +707,7 @@ int corntab_pool(char *ptr,...)
 				char paras[50];
 				if(sscanf(commands[i].name,"%[^(]%*[(]%[^)]",name,paras)==2)//%[^()]%s
 				{
-					// printf("name=%s %s\n",name,paras);
+					printf("name=%s %s\n",name,paras);
 					commands[i].func(1,paras);
 				}
 				// printf("%I64u %I64u\n",commands[i].date.second,date.second);
@@ -759,16 +734,12 @@ int main(int argc, char const *argv[])
 	// char Year,Month,Week,Day,Hour,Minute,Second;
 	fprintf(p,"{second:0-59} {minute:0-59} {hour:0-23} {day-of-month:0-31} {month:0-12} {day-of-week:0-7} {command}\n");
 	for(int i=0;i<1;i++)
-		fprintf(p,"%s\t%s\t%s\t%s\t%s\t%s\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20","*/2","0-6","help(1000)");
+		fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20","*/2","0-6","help(1000)");
 	fclose(p);
 	p=fopen("1.txt","r");
 	//fseek(stream,0,SEEK_SET);
 	fscanf(p,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd);
-		printf("%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd);
-	while(fscanf(p,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd)!=-1)
-	{
-
-	}
+	printf("%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd);
 	fclose(p);
 	Corntab_init();
 	return 0;
