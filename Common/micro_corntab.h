@@ -14,14 +14,14 @@ typedef struct corntab_data
 	uint8_t weekday;
 	uint32_t monthday;
 	uint32_t hour;
-	uint64_t minute;	
+	uint64_t minute;
 	uint64_t second;
 };
 
-typedef struct Command 
+typedef struct Command
 {
 	char *name;
-	char *desc;
+	char *paras;
 	int (*func)(int argc,...);
 	struct corntab_data date;
 };
@@ -33,12 +33,13 @@ typedef struct Func
 	const char *paras;
 };
 
-typedef struct Node 
+typedef struct Node
 {
 	struct Node *pre;
 	struct Node *next;
-	int num;
 	struct Command line;
 }LinkList;
 
+int Corntab_init(char * path);
+int Corntab_pool();
 #endif

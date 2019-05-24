@@ -58,7 +58,7 @@ LinkList *InsertNode(int index)//insert front of index:0-x
 	LinkList *newNode=(LinkList *)malloc(sizeof(LinkList));
 	memset(newNode,0x00,sizeof(LinkList));
 	if(Node->pre!=NULL)
-		Node->pre->next=newNode;			
+		Node->pre->next=newNode;
 	else
 		pHead=newNode;
 	Node->pre=newNode;
@@ -92,7 +92,7 @@ uint64_t sec_min_analyze(char *str)
 		{
 			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
 			{
-				if(debug) 
+				if(debug)
 					printf("3:%s\n",p1 );
 				if(head<0 || head>59 || tail<0 || tail>59 || delim<1 ||delim>59)
 					goto end;
@@ -108,8 +108,8 @@ uint64_t sec_min_analyze(char *str)
 						if(i>=60)
 							res|=(uint64_t)1<<(i-60);
 						else
-							res|=(uint64_t)1<<i;		
-					}		
+							res|=(uint64_t)1<<i;
+					}
 				}
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
@@ -130,8 +130,8 @@ uint64_t sec_min_analyze(char *str)
 						if(i>=60)
 							res|=(uint64_t)1<<(i-60);
 						else
-							res|=(uint64_t)1<<i;		
-					}		
+							res|=(uint64_t)1<<i;
+					}
 				}
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
@@ -149,12 +149,12 @@ uint64_t sec_min_analyze(char *str)
 					printf("0:%s\n",p1 );
 				if(head<0 || head>59)
 					goto end;
-				res|=(uint64_t)1<<head;				
+				res|=(uint64_t)1<<head;
 			}
 			else
-				goto end; 
+				goto end;
 			comma=0;
-			memset(p1,0x00,size);			
+			memset(p1,0x00,size);
 		}
 		else
 			p1[comma++]=str[n];
@@ -196,10 +196,10 @@ uint32_t hour_analyze(char *str)
 						if(i>=24)
 							res|=1<<(i-24);
 						else
-							res|=1<<i;		
-					}			
+							res|=1<<i;
+					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
@@ -219,10 +219,10 @@ uint32_t hour_analyze(char *str)
 						if(i>=24)
 							res|=1<<(i-24);
 						else
-							res|=1<<i;		
-					}		
+							res|=1<<i;
+					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
@@ -235,7 +235,7 @@ uint32_t hour_analyze(char *str)
 				}
 				for(i=0;i<24;i+=delim)
 					res|=1<<i;
-				
+
 			}
 			else if(sscanf(p1,"%d",&head)>0)
 			{
@@ -248,7 +248,7 @@ uint32_t hour_analyze(char *str)
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);			
+			memset(p1,0x00,size);
 		}
 		else
 			p1[comma++]=str[n];
@@ -290,10 +290,10 @@ uint32_t day_month_analyze(char *str)
 						if(i>=31)
 							res|=1<<(i-30);
 						else
-							res|=1<<i;		
-					}		
+							res|=1<<i;
+					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
@@ -313,10 +313,10 @@ uint32_t day_month_analyze(char *str)
 						if(i>=31)
 							res|=1<<(i-30);
 						else
-							res|=1<<i;		
-					}		
+							res|=1<<i;
+					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
@@ -334,12 +334,12 @@ uint32_t day_month_analyze(char *str)
 				if(head<1 || head>31)
 					goto end;
 				res|=1<<head;
-				
+
 			}
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);			
+			memset(p1,0x00,size);
 		}
 		else
 			p1[comma++]=str[n];
@@ -384,7 +384,7 @@ uint8_t day_week_analyze(char *str)
 							res|=1<<i;
 					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
@@ -407,7 +407,7 @@ uint8_t day_week_analyze(char *str)
 							res|=1<<i;
 					}
 				}
-				
+
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
@@ -427,7 +427,7 @@ uint8_t day_week_analyze(char *str)
 				if(head==0 ||head==7)
 				{
 					res|=1<<7;
-					res|=1<<0;					
+					res|=1<<0;
 				}
 				else
 					res|=1<<head;
@@ -435,7 +435,7 @@ uint8_t day_week_analyze(char *str)
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);			
+			memset(p1,0x00,size);
 		}
 		else
 			p1[comma++]=str[n];
@@ -454,7 +454,7 @@ int help(int argc,...)
 	// va_start(arg_list,argc);
 	// char *var= va_arg(arg_list, char *);
 	// va_end(arg_list);
-	printf("help %d\n",argc);
+	printf("this is help %d\n",argc);
 	return 0;
 }
 
@@ -473,17 +473,6 @@ int test(int argc,...)
 	printf("test %d\n",argc);
 	return 0;
 }
-
-
-
-//预定义函数及参数
-Func funcs[]=
-{
-	{help,"help","char *,..."},//... || 3 int float int || int
-	{feed,"feed","int,..."},
-	{test,"test","int,..."},
-};
-
 
 
 int func_analysis(const char *src,char *target)
@@ -558,7 +547,7 @@ int func_analysis(const char *src,char *target)
 			target_comma=0;
 			memset(p2,0x00,target_size);
 			src_comma=0;
-			memset(p1,0x00,src_size);		
+			memset(p1,0x00,src_size);
 		}
 		else
 			p1[src_comma++]=src[src_n];
@@ -578,18 +567,26 @@ int func_exec()
 return 0;
 }
 
+//预定义函数及参数
+struct Func funcs[]=
+{
+	{help,"help","int,..."},//... || 3 int float int || int
+	{feed,"feed","int,..."},
+	{test,"test","int,..."},
+};
+
 LinkList *func_register(char* str)
 {
 	char name[20];
 	char paras[50];
 	if(sscanf(str,"%[^(]%*[(]%[^)]",name,paras)==2)//%[^()]%s
 	{
-		for (uint32_t i = 0; i < sizeof(funcs)/sizeof(Func); ++i)
+		for (uint32_t i = 0; i < sizeof(funcs)/sizeof(struct Func); ++i)
 		{
 			if(strcmp(name,funcs[i].name)==0)
-			{	
-				Command line={str,paras,funcs[i].func};
-				LinkList *newcmd=NewNode();
+			{
+			    LinkList *newcmd=NewNode();
+				struct Command line={str,paras,funcs[i].func};
 				newcmd->line=line;
 				// if(func_analysis(funcs[i].paras,paras)<0)
 				// {
@@ -606,25 +603,6 @@ LinkList *func_register(char* str)
 		return NULL;
 }
 
-
-
-
-
-
-uint8_t corn_update_line(char *str)
-{
-	char s[20],m[20],h[40],dm[20],dw[20],M[20],cmd[20];
-	if(sscanf(str,"%s %s %s %s %s %s %s",s,m,h,dm,dw,M,cmd)==7)
-	{
-	    // corntab_list.hour|=hour_analyze(h);
-	    // corntab_list.minute|=sec_min_analyze(m);
-	    // corntab_list.second|=sec_min_analyze(s);
-	    // corntab_list.weekday|=day_week_analyze(dw);
-	    // corntab_list.monthday|=day_month_analyze(dm);		
-	}
-	return 0;
-}
-
 int Corntab_pool()
 {
 	struct corntab_data date;
@@ -632,7 +610,7 @@ int Corntab_pool()
 	char name[20];
 	char paras[50];
 	// commands[0].date.second=0x1;
-	LinkList *p=NULL;
+    LinkList *p;
 	while(1)
 	{
 		seconds=time(NULL);
@@ -641,55 +619,44 @@ int Corntab_pool()
 		p=pHead;
 		while(p!=NULL)
 		{
-			if(sscanf(p->line.name,"%[^(]%*[(]%[^)]",name,paras)==2)
-			{
-				p->line.func(1,paras);
-			}
-			if(p->next!=NULL)
-			{
-				printf("here\n");
-				p=p->next;
-			}
-			else
-				break;
+		    p->line.func(3,paras);
+            p=p->next;
 		}
-		Sleep(1000);		
+		Sleep(1000);
 	}
 
 }
 
 
- 
+
 int Corntab_init(char * path)
 {
 	char Line[512];
 	char s[20],m[20],h[40],dm[20],dw[20],M[20],cmd[20];// char Year,Month,Week,Day,Hour,Minute,Second;
 	FILE *p=fopen(path,"r");
 	fgets(Line,sizeof(Line),p);
-	LinkList *node=NULL;
 	while(fgets(Line,sizeof(Line),p)!=NULL)
 	{
 		if(sscanf(Line,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd)==7)
 		{
-			node=func_register(cmd);
-			// if(node!=NULL)
-			// {
-			// 	node->line.date.hour|=hour_analyze(h);
-			// 	node->line.date.minute|=sec_min_analyze(m);
-			// 	node->line.date.second|=sec_min_analyze(s);
-			// 	node->line.date.weekday|=day_week_analyze(dw);
-			// 	node->line.date.monthday|=day_month_analyze(dm);
-			// 	printf("%#x %#x %#x %#x %#x\n",node->line.date.hour,node->line.date.minute,node->line.date.second,\
-			// 		node->line.date.weekday,node->line.date.monthday);
-			// }			
+			LinkList *node=func_register(cmd);
+			 if(node!=NULL)
+			 {
+			 	node->line.date.hour|=hour_analyze(h);
+			 	node->line.date.minute|=sec_min_analyze(m);
+			 	node->line.date.second|=sec_min_analyze(s);
+			 	node->line.date.weekday|=day_week_analyze(dw);
+			 	node->line.date.monthday|=day_month_analyze(dm);
+//			 	printf("%#x %#x %#x %#x %#x\n",node->line.date.hour,node->line.date.minute,node->line.date.second,\
+//			 		node->line.date.weekday,node->line.date.monthday);
+			 }
 		}
 	}
-	free(node);
 	fclose(p);
 	return 0;
 }
 
-
+//
 int main(int argc, char const *argv[])
 {
 	FILE *p=fopen("1.txt","w+");
