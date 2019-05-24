@@ -2,297 +2,81 @@
 
 #define debug 0
 
-int help(int argc,...)
+
+LinkList *pHead=NULL;
+LinkList *pTail=NULL;
+
+LinkList *NewNode()//init or append
 {
-	va_list arg_list;
-	va_start(arg_list,argc);
-	char *var= va_arg(arg_list, char *);
-	va_end(arg_list);
-	printf("here %s\n",var);
-	return 0;
-}
-
-int feed(int argc,...)
-{
-	return 0;
-}
-
-int test(int argc,...)
-{
-	return 0;
-}
-
-corntab_data corntab_list,corntab_aim;
-
-Func funcs[]=
-{
-	{help,"help","char *,char *"},//... || 3 int float int || int
-	{feed,"feed","int,..."},
-	{test,"test","int,..."},
-};
-
-Command commands[] = {
-{ "help(10.0)", "Display this list of commands",help},
-{ "feed(3,int)", "Display this list of commands",feed},
-// { "kerninfo", "Display information about the kernel", mon_kerninfo },
-// { "backtrace", "Display the current stack trace", mon_backtrace },
-};
-
-
-
-int paras_valid(const char *src,char *target) //ruler_type[int,float,double,char *] target_paras
-{
- 	int aim;
- 	float aim_f;
- 	double aim_lf;
-    uint8_t src_size=strlen(src);
-    char *p1=(char *)malloc((src_size)*sizeof(char));
-    memset(p1,0x00,src_size);
-    uint8_t target_size=strlen(target);
-    char *p2=(char *)malloc((target_size)*sizeof(char));
-    memset(p1,0x00,target_size);
-    char *p3;
-	uint8_t src_comma=0,src_n=0;
-	uint8_t target_comma=0,target_n=0;
-	uint8_t int_state=0;
-	for(src_n=0;src_n<=src_size;src_n++)
+	LinkList *Node=(LinkList *)malloc(sizeof(LinkList));
+	memset(Node,0x00,sizeof(LinkList));
+	if(pHead==NULL)
 	{
-		if(src[src_n]==','|| src[src_n]=='\0')
-		{
-			for (;target_n<=target_size;target_n++)
-			{
-				if(target[target_n]==','||target[target_n]=='\0')
-				{
-					target_n++;
-					break;
-				}
-				else
-					p2[target_comma++]=target[target_n];
-			}
-			if(p2[0]==0x00)//too few para
-				goto end;
-			if(strcmp(p1,"int")==0)
-			{
-				if(sscanf(p2,"%d",&aim)==0)
-					goto end;
-				int_state++;
-			}
-			else if(strcmp(p1,"double")==0)
-			{
-				if(sscanf(p2,"%lf",&aim_lf)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"float")==0)
-			{
-				if(sscanf(p2,"%f",&aim_f)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"char *")==0)
-			{
-				p3=(char *)malloc((target_comma)*sizeof(char));
-				memset(p3,0x00,target_comma);
-				if(sscanf(p2,"%s",p3)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"...")==0)
-			{
-				printf("here ...\n");
-				if(int_state==1)
-				{
-					free(p1);
-					free(p2);
-					free(p3);
-					return 10;
-				}
-			}
-			else//wrong type
-				goto end;
-			target_comma=0;
-			memset(p2,0x00,target_size);
-			src_comma=0;
-			memset(p1,0x00,src_size);		
-		}
-		else
-			p1[src_comma++]=src[src_n];
-	}
-	if(target_n<target_size)//two many paras
-		goto end;
-	return 0;
-end:
-	free(p1);
-	free(p2);
-	free(p3);
-	return -1;
-}
-
-int func_register(char* str) //help(100)
-{
-	char name[20];
-	char paras[50];
-	if(sscanf(str,"%[^(]%*[(]%[^)]",name,paras)==2)//%[^()]%s
-	{
-		for (uint32_t i = 0; i < sizeof(funcs)/sizeof(Func); ++i)
-		{
-			if(strcmp(name,funcs[i].name)==0)
-			{	
-				if(paras_valid(funcs[i].paras,paras)<0)
-				{
-					//paras error
-				}
-				else
-					goto success;
-			}
-		}//no command
-		return -1;
-	}
-	else//grammar error
-		return -1;
-success:
-	return 0;
-}
-
-int Corntab_max=10;
-typedef struct Node 
-{
-	
-	// const char *name;
-	// const char *desc;
-	// int (*func)(int argc,...);
-	// struct corntab_data date;
-	int num;
-	struct Node *pre;
-	struct Node *next;
-}*pNode;
-
-static pNode pHead=NULL;
-static pNode pTail=NULL;
-static int Node_count=0;
-
-
-pNode NewNode(int count)//init or append
-{
-	pNode Node=(pNode)malloc(sizeof(struct Node));
-	Node->next=Node->pre=NULL;
-	Node->num=count;
-	if(NULL==Node)
-		return NULL;
-	if(NULL==pHead)
-		pHead=pTail=Node;
-	else
-		Node->pre=pTail;
-		pTail->next=Node;
+		pHead=Node;
 		pTail=Node;
-	Node_count++;
+	}
+	else
+	{
+		pTail->next=Node;
+		Node->pre=pTail;
+		pTail=Node;
+	}
 	return Node;
 }
 
-pNode PopNode(int index)
+LinkList *PopNode(int index)
 {
-	pNode p=(pNode)malloc(sizeof(struct Node));
-	if(Node_count<abs(index))
-		return NULL;
-	if(index>0)
+	LinkList *Node=pHead;
+	while(index-->0)
 	{
-		p=pHead;
-		while(index-->0)
-			p=p->next;
-		p->pre->next=p->next;
-		p->next->pre=p->pre;
-		return p;		
+		if(Node->next!=NULL)
+			Node=Node->next;
+		else
+			return NULL;
 	}
-	else if((index==0) || (Node_count==abs(index)))
-	{
-		p=pHead;
-		pHead->next->pre=NULL;
-		pHead=pHead->next;
-		return p;
-	}
-	else if(index==-1)
-	{
-		p=pTail;
-		p->pre->next=NULL;
-		pTail=p->pre;
-		return p;	
-	}
-	else if(index<-1)
-	{
-		p=pTail;
-		while(++index<0)
-			p=p->pre;
-		p->pre->next=p->next;
-		p->next->pre=p->pre;
-		return p;		
-	}
-	return NULL;
+	if(Node->next!=NULL)
+		Node->next->pre=Node->pre;
+	else
+		pTail=pTail->pre;
+	if(Node->pre!=NULL)
+		Node->pre->next=Node->next;
+	else
+		pHead=Node->next;
+	return Node;
 }
 
-pNode InsertNode(int index)
+LinkList *InsertNode(int index)//insert front of index:0-x
 {
-	pNode p;
-	pNode Node=(pNode)malloc(sizeof(struct Node));
-	Node->next=Node->pre=NULL;
-	if(NULL==Node)
-		return NULL;
-	if(abs(index)>Node_count)
-		return NULL;
-	if(index>0)
+	LinkList *Node=pHead;
+	while(index-->0)
 	{
-		p=pHead;
-		while(index-->0)
-			p=p->next;
-		p->pre->next=Node;
-		p->pre=Node;
-		Node->next=p;
-		Node->pre=p->pre;
-		return Node;		
+		if(Node->next!=NULL)
+			Node=Node->next;
+		else
+			return NewNode();
 	}
-	else if((index==0) || (Node_count==abs(index)))
-	{
-		Node->next=pHead;
-		pHead->pre=Node;
-		pHead=Node;
-		return Node;
-	}
-	else if(index<0)
-	{
-		p=pTail;
-		while(++index<0)
-			p=p->pre;
-		p->pre->next=Node;
-		p->pre=Node;
-		Node->pre=p->pre;
-		Node->next=p;
-		return Node;		
-	}
-	return NULL;	
+	LinkList *newNode=(LinkList *)malloc(sizeof(LinkList));
+	memset(newNode,0x00,sizeof(LinkList));
+	if(Node->pre!=NULL)
+		Node->pre->next=newNode;			
+	else
+		pHead=newNode;
+	Node->pre=newNode;
+	newNode->next=Node;
+	newNode->pre=Node->pre;
+	return newNode;
 }
-
-int Corntab_init()
+LinkList *ModifyNode(int index)
 {
-	for (int i = 0; i < 10; i++)
+	LinkList *Node=pHead;
+	while(index-->0)
 	{
-		NewNode(i);
+		if(Node->next!=NULL)
+			Node=Node->next;
+		else
+			return NULL;
 	}
-	pNode p=pHead;
-	while(p->next!=NULL)
-	{
-		printf("%d\n",p->num);
-		p=p->next;
-	}
-	printf("%d\n",p->num);
-
-	// printf("\npop:%d\n",PopNode(-10)->num);
-	p=InsertNode(1);
-	p->num=100;
-	p=pTail;
-	printf("\n");
-	while(p->pre!=NULL)
-	{
-		printf("%d\n",p->num);
-		p=p->pre;
-	}
-	printf("%d\n",p->num);
-	return 0;
+	return Node;
 }
 
 uint64_t sec_min_analyze(char *str)
@@ -664,17 +448,169 @@ end:
 	return res;
 }
 
-uint8_t corn_trigger()
+int help(int argc,...)
 {
-	uint8_t res;
-
-	return res;
+	// va_list arg_list;
+	// va_start(arg_list,argc);
+	// char *var= va_arg(arg_list, char *);
+	// va_end(arg_list);
+	printf("help %d\n",argc);
+	return 0;
 }
 
-void corntab_clear()
+int feed(int argc,...)
 {
-	memset(&corntab_list,0x00,sizeof(corntab_list)*sizeof(char));
+	va_list arg_list;
+	va_start(arg_list,argc);
+	char *var= va_arg(arg_list, char *);
+	va_end(arg_list);
+	printf("feed %d %s\n",argc,var);
+	return 0;
 }
+
+int test(int argc,...)
+{
+	printf("test %d\n",argc);
+	return 0;
+}
+
+
+
+//预定义函数及参数
+Func funcs[]=
+{
+	{help,"help","char *,..."},//... || 3 int float int || int
+	{feed,"feed","int,..."},
+	{test,"test","int,..."},
+};
+
+
+
+int func_analysis(const char *src,char *target)
+{
+	printf("%s %s\n",src,target );
+ 	int aim;
+ 	float aim_f;
+ 	double aim_lf;
+    uint8_t src_size=strlen(src);
+    char *p1=(char *)malloc((src_size)*sizeof(char));
+    memset(p1,0x00,src_size);
+    uint8_t target_size=strlen(target);
+    char *p2=(char *)malloc((target_size)*sizeof(char));
+    memset(p1,0x00,target_size);
+    char *p3;
+	uint8_t src_comma=0,src_n=0;
+	uint8_t target_comma=0,target_n=0;
+	uint8_t int_state=0;
+	for(src_n=0;src_n<=src_size;src_n++)
+	{
+		if(src[src_n]==','|| src[src_n]=='\0')
+		{
+			for (;target_n<=target_size;target_n++)
+			{
+				if(target[target_n]==','||target[target_n]=='\0')
+				{
+					target_n++;
+					break;
+				}
+				else
+					p2[target_comma++]=target[target_n];
+			}
+			if(p2[0]==0x00)//too few para
+				goto end;
+			if(strcmp(p1,"int")==0)
+			{
+				if(sscanf(p2,"%d",&aim)==0)
+					goto end;
+				int_state++;
+			}
+			else if(strcmp(p1,"double")==0)
+			{
+				if(sscanf(p2,"%lf",&aim_lf)==0)
+					goto end;
+			}
+			else if(strcmp(p1,"float")==0)
+			{
+				if(sscanf(p2,"%f",&aim_f)==0)
+					goto end;
+			}
+			else if(strcmp(p1,"char *")==0)
+			{
+				printf("char *\n");
+				p3=(char *)malloc((target_comma)*sizeof(char));
+				memset(p3,0x00,target_comma);
+				if(sscanf(p2,"%s",p3)==0)
+					goto end;
+			}
+			else if(strcmp(p1,"...")==0)
+			{
+				printf("here ...\n");
+				if(int_state==1)
+				{
+					free(p1);
+					free(p2);
+					free(p3);
+					return 10;
+				}
+			}
+			else//wrong type
+				goto end;
+			target_comma=0;
+			memset(p2,0x00,target_size);
+			src_comma=0;
+			memset(p1,0x00,src_size);		
+		}
+		else
+			p1[src_comma++]=src[src_n];
+	}
+	if(target_n<target_size)//two many paras
+		goto end;
+	return 0;
+end:
+	free(p1);
+	free(p2);
+	free(p3);
+	return -1;
+}
+int func_exec()
+{
+
+return 0;
+}
+
+LinkList *func_register(char* str)
+{
+	char name[20];
+	char paras[50];
+	if(sscanf(str,"%[^(]%*[(]%[^)]",name,paras)==2)//%[^()]%s
+	{
+		for (uint32_t i = 0; i < sizeof(funcs)/sizeof(Func); ++i)
+		{
+			if(strcmp(name,funcs[i].name)==0)
+			{	
+				Command line={str,paras,funcs[i].func};
+				LinkList *newcmd=NewNode();
+				newcmd->line=line;
+				// if(func_analysis(funcs[i].paras,paras)<0)
+				// {
+				// 	//paras error
+				// 	printf("error\n");
+				// }
+				// else
+					return newcmd;
+			}
+		}//no this func
+		return NULL;
+	}
+	else//format error
+		return NULL;
+}
+
+
+
+
+
+
 uint8_t corn_update_line(char *str)
 {
 	char s[20],m[20],h[40],dm[20],dw[20],M[20],cmd[20];
@@ -689,59 +625,80 @@ uint8_t corn_update_line(char *str)
 	return 0;
 }
 
-int corntab_pool(char *ptr,...)
+int Corntab_pool()
 {
 	struct corntab_data date;
 	time_t seconds=time(NULL);
-	commands[0].date.second=0x1;
+	char name[20];
+	char paras[50];
+	// commands[0].date.second=0x1;
+	LinkList *p=NULL;
 	while(1)
 	{
 		seconds=time(NULL);
 		date.second=(uint64_t)(seconds%60);
 		// printf("%d\n",seconds);
-		for (unsigned int i = 0; i <sizeof(commands)/sizeof(Command); ++i)
+		p=pHead;
+		while(p!=NULL)
 		{
-			// if((commands[i].date.second>>date.second) ==1)
+			if(sscanf(p->line.name,"%[^(]%*[(]%[^)]",name,paras)==2)
 			{
-				char name[20];
-				char paras[50];
-				if(sscanf(commands[i].name,"%[^(]%*[(]%[^)]",name,paras)==2)//%[^()]%s
-				{
-					printf("name=%s %s\n",name,paras);
-					commands[i].func(1,paras);
-				}
-				// printf("%I64u %I64u\n",commands[i].date.second,date.second);
+				p->line.func(1,paras);
 			}
-			// if (strcmp(ptr, commands[i].name) == 0)
-			// {
-			// 	commands[i].func(1,2);
-			// }
+			if(p->next!=NULL)
+			{
+				printf("here\n");
+				p=p->next;
+			}
+			else
+				break;
 		}
-		Sleep(100);		
+		Sleep(1000);		
 	}
 
 }
 
 
  
-
+int Corntab_init(char * path)
+{
+	char Line[512];
+	char s[20],m[20],h[40],dm[20],dw[20],M[20],cmd[20];// char Year,Month,Week,Day,Hour,Minute,Second;
+	FILE *p=fopen(path,"r");
+	fgets(Line,sizeof(Line),p);
+	LinkList *node=NULL;
+	while(fgets(Line,sizeof(Line),p)!=NULL)
+	{
+		if(sscanf(Line,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd)==7)
+		{
+			node=func_register(cmd);
+			// if(node!=NULL)
+			// {
+			// 	node->line.date.hour|=hour_analyze(h);
+			// 	node->line.date.minute|=sec_min_analyze(m);
+			// 	node->line.date.second|=sec_min_analyze(s);
+			// 	node->line.date.weekday|=day_week_analyze(dw);
+			// 	node->line.date.monthday|=day_month_analyze(dm);
+			// 	printf("%#x %#x %#x %#x %#x\n",node->line.date.hour,node->line.date.minute,node->line.date.second,\
+			// 		node->line.date.weekday,node->line.date.monthday);
+			// }			
+		}
+	}
+	free(node);
+	fclose(p);
+	return 0;
+}
 
 
 int main(int argc, char const *argv[])
 {
 	FILE *p=fopen("1.txt","w+");
-	char s[20],m[20],h[40],dm[20],dw[20],M[20],cmd[20];
-	// char Year,Month,Week,Day,Hour,Minute,Second;
 	fprintf(p,"{second:0-59} {minute:0-59} {hour:0-23} {day-of-month:0-31} {month:0-12} {day-of-week:0-7} {command}\n");
 	for(int i=0;i<1;i++)
-		fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20","*/2","0-6","help(1000)");
+		fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20","*/2","0-6","help(999)");
 	fclose(p);
-	p=fopen("1.txt","r");
-	//fseek(stream,0,SEEK_SET);
-	fscanf(p,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd);
-	printf("%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd);
-	fclose(p);
-	Corntab_init();
+	Corntab_init("1.txt");
+	Corntab_pool();
 	return 0;
 }
 

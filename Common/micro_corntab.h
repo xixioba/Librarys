@@ -20,8 +20,8 @@ typedef struct corntab_data
 
 typedef struct Command 
 {
-	const char *name;
-	const char *desc;
+	char *name;
+	char *desc;
 	int (*func)(int argc,...);
 	struct corntab_data date;
 };
@@ -32,5 +32,13 @@ typedef struct Func
 	const char *name;
 	const char *paras;
 };
+
+typedef struct Node 
+{
+	struct Node *pre;
+	struct Node *next;
+	int num;
+	struct Command line;
+}LinkList;
 
 #endif
