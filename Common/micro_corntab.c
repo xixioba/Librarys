@@ -85,6 +85,7 @@ uint64_t sec_min_analyze(char *str)
  	int head,tail,delim;
     uint8_t size=strlen(str);
     char *p1=(char *)malloc(size*sizeof(char));
+    memset(p1,0,size*sizeof(char));
 	uint8_t comma=0,i,n;
 	for(n=0;n<=size;n++)
 	{
@@ -92,61 +93,34 @@ uint64_t sec_min_analyze(char *str)
 		{
 			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
 			{
-				if(debug)
-					printf("3:%s\n",p1 );
-				if(head<0 || head>59 || tail<0 || tail>59 || delim<1 ||delim>59)
+				if(head<0 || head>59 || tail<0 || tail>59 || delim<1 ||delim>59 || head>tail)
 					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i+=delim)
-						res|=(uint64_t)1<<i;
-				}
-				else
-				{
-					for(i=head;i<=60+tail;i++)
-					{
-						if(i>=60)
-							res|=(uint64_t)1<<(i-60);
-						else
-							res|=(uint64_t)1<<i;
-					}
-				}
+				for(i=head;i<=tail;i+=delim)
+					res|=(uint64_t)1<<i;
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
-				if(debug)
-					printf("2:%s\n",p1 );
-				if(head<0 || head>59 || tail<0 || tail>59)
+				if(head<0 || head>59 || tail<0 || tail>59 || head>tail)
 					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i++)
-						res|=(uint64_t)1<<i;
-				}
-				else
-				{
-					for(i=head;i<=60+tail;i++)
-					{
-						if(i>=60)
-							res|=(uint64_t)1<<(i-60);
-						else
-							res|=(uint64_t)1<<i;
-					}
-				}
+				for(i=head;i<=tail;i++)
+					res|=(uint64_t)1<<i;
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
-				if(debug)
-					printf("1:%s\n",p1 );
 				if(delim<1 || delim>59)
 					goto end;
-				for(i=0;i<60;i+=delim)
+				for(i=delim-1;i<60;i+=delim)
 					res|=(uint64_t)1<<i;
+			}
+			else if(p1[0]=='*')
+			{
+				for (int i = 0; i < 60; ++i)
+				{
+					res|=(uint64_t)1<<i;
+				}
 			}
 			else if(sscanf(p1,"%d",&head)>0)
 			{
-				if(debug)
-					printf("0:%s\n",p1 );
 				if(head<0 || head>59)
 					goto end;
 				res|=(uint64_t)1<<head;
@@ -154,7 +128,7 @@ uint64_t sec_min_analyze(char *str)
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);
+			memset(p1,0x00,size*sizeof(char));
 		}
 		else
 			p1[comma++]=str[n];
@@ -173,6 +147,7 @@ uint32_t hour_analyze(char *str)
  	int head,tail,delim;
     uint8_t size=strlen(str);
     char *p1=(char *)malloc(size*sizeof(char));
+    memset(p1,0,size*sizeof(char));
 	uint8_t comma=0,i,n;
 	for(n=0;n<=size;n++)
 	{
@@ -180,67 +155,34 @@ uint32_t hour_analyze(char *str)
 		{
 			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
 			{
-				if(debug)
-					printf("3:%s\n",p1);
-				if(head<0 || head>23 || tail<0 || tail>23 || delim<1)
+				if(head<0 || head>23 || tail<0 || tail>23 || delim<1 || head>tail)
 					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i+=delim)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=24+tail;i+=delim)
-					{
-						if(i>=24)
-							res|=1<<(i-24);
-						else
-							res|=1<<i;
-					}
-				}
+				for(i=head;i<=tail;i+=delim)
+					res|=1<<i;
 
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
-				if(debug)
-					printf("2:%s\n",p1);
-				if(head<0 || head>23 || tail<0 || tail>23)
-					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i++)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=24+tail;i++)
-					{
-						if(i>=24)
-							res|=1<<(i-24);
-						else
-							res|=1<<i;
-					}
-				}
 
+				if(head<0 || head>23 || tail<0 || tail>23 || head>tail)
+					goto end;
+				for(i=head;i<=tail;i++)
+					res|=1<<i;
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
-				if(debug)
-					printf("1:%s\n",p1);
 				if(delim<1 || delim>23)
-				{
-					res=0;
 					goto end;
-				}
-				for(i=0;i<24;i+=delim)
+				for(i=delim-1;i<24;i+=delim)
 					res|=1<<i;
-
+			}
+			else if(p1[0]=='*')
+			{
+				for (int i = 0; i < 24; ++i)
+					res|=1<<i;
 			}
 			else if(sscanf(p1,"%d",&head)>0)
 			{
-				if(debug)
-					printf("0:%s\n",p1);
 				if(head<0 || head>23)
 					goto end;
 				res|=1<<head;
@@ -248,98 +190,7 @@ uint32_t hour_analyze(char *str)
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);
-		}
-		else
-			p1[comma++]=str[n];
-	}
-	free(p1);
-	return res;
-end:
-	res=0;
-	free(p1);
-	return res;
-}
-
-uint32_t day_month_analyze(char *str)
-{
-	uint32_t res=0;
- 	int head,tail,delim;
-    uint8_t size=strlen(str);
-    char *p1=(char *)malloc(size*sizeof(char));
-	uint8_t comma=0,i,n;
-	for(n=0;n<=size;n++)
-	{
-		if(str[n]==','|| str[n]=='\0')
-		{
-			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
-			{
-				if(debug)
-					printf("3:%s\n",p1);
-				if(head<1 || head>31 || tail<1 || tail>31 || delim<1 || delim>31)
-					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i+=delim)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=31+tail;i+=delim)
-					{
-						if(i>=31)
-							res|=1<<(i-30);
-						else
-							res|=1<<i;
-					}
-				}
-
-			}
-			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
-			{
-				if(debug)
-					printf("2:%s\n",p1);
-				if(head<1 || head>31 || tail<1 || tail>31)
-					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i++)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=31+tail;i++)
-					{
-						if(i>=31)
-							res|=1<<(i-30);
-						else
-							res|=1<<i;
-					}
-				}
-
-			}
-			else if(sscanf(p1,"*/%d",&delim)>0)
-			{
-				if(debug)
-					printf("1:%s\n",p1);
-				if(delim<1 || delim>31)
-					goto end;
-				for(i=1;i<=31;i+=delim)
-					res|=1<<i;
-			}
-			else if(sscanf(p1,"%d",&head)>0)
-			{
-				if(debug)
-					printf("0:%s\n",p1);
-				if(head<1 || head>31)
-					goto end;
-				res|=1<<head;
-
-			}
-			else
-				goto end;
-			comma=0;
-			memset(p1,0x00,size);
+			memset(p1,0x00,size*sizeof(char));
 		}
 		else
 			p1[comma++]=str[n];
@@ -358,6 +209,7 @@ uint8_t day_week_analyze(char *str)
  	int head,tail,delim;
     uint8_t size=strlen(str);
     char *p1=(char *)malloc(size*sizeof(char));
+    memset(p1,0,size*sizeof(char));
 	uint8_t comma=0,i,n;
 	for(n=0;n<=size;n++)
 	{
@@ -365,77 +217,160 @@ uint8_t day_week_analyze(char *str)
 		{
 			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
 			{
-				if(debug)
-					printf("3:%s\n",p1);
-				if(head<0 || head>7 || tail<0 || tail>7 || delim<1 || abs(head-tail)==7)
+				if(head<1 || head>7 || tail<1 || tail>7 || delim<1 || head>tail)
 					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i+=delim)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=8+tail;i+=delim)
-					{
-						if(i>7)
-							res|=1<<(i-7);
-						else
-							res|=1<<i;
-					}
-				}
-
+				for(i=head-1;i<tail;i+=delim)
+					res|=1<<i;
 			}
 			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
 			{
-				if(debug)
-					printf("2:%s\n",p1);
-				if(head<0 || head>7 || tail<0 || tail>7)
+				if(head<1 || head>7 || tail<1 || tail>7 || delim<1 || head>tail)
 					goto end;
-				if(head<=tail)
-				{
-					for(i=head;i<=tail;i++)
-						res|=1<<i;
-				}
-				else
-				{
-					for(i=head;i<=8+tail;i++)
-					{
-						if(i>7)
-							res|=1<<(i-8);
-						else
-							res|=1<<i;
-					}
-				}
-
+				for(i=head-1;i<tail;i++)
+					res|=1<<i;
 			}
 			else if(sscanf(p1,"*/%d",&delim)>0)
 			{
-				if(debug)
-					printf("1:%s\n",p1);
-				if(delim<0 || delim>7)
+				if(delim<1 || delim>7)
 					goto end;
-				for(i=1;i<8;i+=delim)
+				for(i=delim-1;i<7;i+=delim)
 					res|=1<<i;
 			}
+			else if(p1[0]=='*')
+			{
+				for(i=0;i<7;i++)
+					res|=1<<i;
+			}			
 			else if(sscanf(p1,"%d",&head)>0)
 			{
-				if(debug)
-					printf("0:%s\n",p1);
 				if(head<1 || head>7)
 					goto end;
-				if(head==0 ||head==7)
-				{
-					res|=1<<7;
-					res|=1<<0;
-				}
-				else
-					res|=1<<head;
+				res|=1<<(head-1);
 			}
 			else
 				goto end;
 			comma=0;
-			memset(p1,0x00,size);
+			memset(p1,0x00,size*sizeof(char));
+		}
+		else
+			p1[comma++]=str[n];
+	}
+	free(p1);
+	return res;
+end:
+	res=0;
+	free(p1);
+	return res;
+}
+
+uint32_t day_month_analyze(char *str)
+{
+	uint32_t res=0;
+ 	int head,tail,delim;
+    uint8_t size=strlen(str);
+    char *p1=(char *)malloc(size*sizeof(char));
+    memset(p1,0,size*sizeof(char));
+	uint8_t comma=0,i,n;
+	for(n=0;n<=size;n++)
+	{
+		if(str[n]==','|| str[n]=='\0')
+		{
+			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
+			{
+				if(head<1 || head>31 || tail<1 || tail>31 || delim<1 || delim>31 || head>tail)
+					goto end;
+				for(i=head-1;i<tail;i+=delim)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
+			{
+				if(head<1 || head>31 || tail<1 || tail>31 || head>tail)
+					goto end;
+				for(i=head-1;i<tail;i++)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"*/%d",&delim)>0)
+			{
+				if(delim<1 || delim>31)
+					goto end;
+				for(i=delim-1;i<31;i+=delim)
+					res|=1<<i;
+			}
+			else if(p1[0]=='*')
+			{
+				for(i=0;i<31;i++)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"%d",&head)>0)
+			{
+				if(head<1 || head>31)
+					goto end;
+				res|=1<<(head-1);
+			}
+			else
+				goto end;
+			comma=0;
+			memset(p1,0x00,size*sizeof(char));
+		}
+		else
+			p1[comma++]=str[n];
+	}
+	free(p1);
+	return res;
+end:
+	res=0;
+	free(p1);
+	return res;
+}
+
+uint32_t month_analyze(char *str)
+{
+	uint16_t res=0;
+ 	int head,tail,delim;
+    uint8_t size=strlen(str);
+    char *p1=(char *)malloc(size*sizeof(char));
+    memset(p1,0,size*sizeof(char));
+	uint8_t comma=0,i,n;
+	for(n=0;n<=size;n++)
+	{
+		if(str[n]==','|| str[n]=='\0')
+		{
+			if(sscanf(p1,"%d-%d/%d",&head,&tail,&delim)==3)
+			{
+				if(head<1 || head>12 || tail<1 || tail>12 || delim<1 || delim>12 || head>tail)
+					goto end;
+				for(i=head-1;i<tail;i+=delim)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"%d-%d",&head,&tail)==2)
+			{
+				if(head<1 || head>12 || tail<1 || tail>12 || head>tail)
+					goto end;
+				for(i=head-1;i<tail;i++)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"*/%d",&delim)>0)
+			{
+				if(delim<1 || delim>12)
+					goto end;
+				for(i=delim-1;i<12;i+=delim)
+					res|=1<<i;
+			}
+			else if(p1[0]=='*')
+			{
+				for(i=0;i<12;i++)
+					res|=1<<i;
+			}
+			else if(sscanf(p1,"%d",&head)>0)
+			{
+				if(head<1 || head>12)
+					goto end;
+				res|=1<<(head-1);
+			}
+			else
+				goto end;
+			comma=0;
+			memset(p1,0x00,size*sizeof(char));
 		}
 		else
 			p1[comma++]=str[n];
@@ -588,13 +523,7 @@ LinkList *func_register(char* str)
 			    LinkList *newcmd=NewNode();
 				struct Command line={str,paras,funcs[i].func};
 				newcmd->line=line;
-				// if(func_analysis(funcs[i].paras,paras)<0)
-				// {
-				// 	//paras error
-				// 	printf("error\n");
-				// }
-				// else
-					return newcmd;
+				return newcmd;
 			}
 		}//no this func
 		return NULL;
@@ -637,7 +566,7 @@ int Corntab_init(char * path)
 	fgets(Line,sizeof(Line),p);
 	while(fgets(Line,sizeof(Line),p)!=NULL)
 	{
-		if(sscanf(Line,"%s %s %s %s %s %s %s\n",s,m,h,dm,dw,M,cmd)==7)
+		if(sscanf(Line,"%s %s %s %s %s %s %s\n",s,m,h,dw,dm,M,cmd)==7)
 		{
 			LinkList *node=func_register(cmd);
 			 if(node!=NULL)
@@ -647,8 +576,9 @@ int Corntab_init(char * path)
 			 	node->line.date.second|=sec_min_analyze(s);
 			 	node->line.date.weekday|=day_week_analyze(dw);
 			 	node->line.date.monthday|=day_month_analyze(dm);
-//			 	printf("%#x %#x %#x %#x %#x\n",node->line.date.hour,node->line.date.minute,node->line.date.second,\
-//			 		node->line.date.weekday,node->line.date.monthday);
+			 	node->line.date.month|=month_analyze(M);
+			 	// printf("%#x %#x %#llx weekday:%#x monthday:%#x month:%x\n",node->line.date.hour,node->line.date.minute,node->line.date.second,\
+			 	// 	node->line.date.weekday,node->line.date.monthday,node->line.date.month);
 			 }
 		}
 	}
@@ -659,11 +589,11 @@ int Corntab_init(char * path)
 //
 int main(int argc, char const *argv[])
 {
-	FILE *p=fopen("1.txt","w+");
-	fprintf(p,"{second:0-59} {minute:0-59} {hour:0-23} {day-of-month:0-31} {month:0-12} {day-of-week:0-7} {command}\n");
-	for(int i=0;i<1;i++)
-		fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20","*/2","0-6","help(999)");
-	fclose(p);
+	// FILE *p=fopen("1.txt","w+");
+	// fprintf(p,"{second:0-59} {minute:0-59} {hour:0-23} {day-of-month:1-31} {month:1-12} {day-of-week:1-7} {command}\n");
+	// for(int i=0;i<1;i++)
+	// 	fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20,1-3,8-12/2,*/10","*/2","0-6","help(999)");
+	// fclose(p);
 	Corntab_init("1.txt");
 	Corntab_pool();
 	return 0;

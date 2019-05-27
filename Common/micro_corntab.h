@@ -12,6 +12,7 @@
 typedef struct corntab_data
 {
 	uint8_t weekday;
+	uint16_t month;
 	uint32_t monthday;
 	uint32_t hour;
 	uint64_t minute;
