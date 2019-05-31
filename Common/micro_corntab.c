@@ -2,6 +2,12 @@
 
 #define debug 0
 
+#include <string.h>
+
+#include <stdlib.h>
+#include <stdarg.h>
+#include <sys/time.h>
+#include <Windows.h>
 
 LinkList *pHead=NULL;
 LinkList *pTail=NULL;
@@ -410,98 +416,6 @@ int test(int argc,...)
 }
 
 
-int func_analysis(const char *src,char *target)
-{
-	printf("%s %s\n",src,target );
- 	int aim;
- 	float aim_f;
- 	double aim_lf;
-    uint8_t src_size=strlen(src);
-    char *p1=(char *)malloc((src_size)*sizeof(char));
-    memset(p1,0x00,src_size);
-    uint8_t target_size=strlen(target);
-    char *p2=(char *)malloc((target_size)*sizeof(char));
-    memset(p1,0x00,target_size);
-    char *p3;
-	uint8_t src_comma=0,src_n=0;
-	uint8_t target_comma=0,target_n=0;
-	uint8_t int_state=0;
-	for(src_n=0;src_n<=src_size;src_n++)
-	{
-		if(src[src_n]==','|| src[src_n]=='\0')
-		{
-			for (;target_n<=target_size;target_n++)
-			{
-				if(target[target_n]==','||target[target_n]=='\0')
-				{
-					target_n++;
-					break;
-				}
-				else
-					p2[target_comma++]=target[target_n];
-			}
-			if(p2[0]==0x00)//too few para
-				goto end;
-			if(strcmp(p1,"int")==0)
-			{
-				if(sscanf(p2,"%d",&aim)==0)
-					goto end;
-				int_state++;
-			}
-			else if(strcmp(p1,"double")==0)
-			{
-				if(sscanf(p2,"%lf",&aim_lf)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"float")==0)
-			{
-				if(sscanf(p2,"%f",&aim_f)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"char *")==0)
-			{
-				printf("char *\n");
-				p3=(char *)malloc((target_comma)*sizeof(char));
-				memset(p3,0x00,target_comma);
-				if(sscanf(p2,"%s",p3)==0)
-					goto end;
-			}
-			else if(strcmp(p1,"...")==0)
-			{
-				printf("here ...\n");
-				if(int_state==1)
-				{
-					free(p1);
-					free(p2);
-					free(p3);
-					return 10;
-				}
-			}
-			else//wrong type
-				goto end;
-			target_comma=0;
-			memset(p2,0x00,target_size);
-			src_comma=0;
-			memset(p1,0x00,src_size);
-		}
-		else
-			p1[src_comma++]=src[src_n];
-	}
-	if(target_n<target_size)//two many paras
-		goto end;
-	return 0;
-end:
-	free(p1);
-	free(p2);
-	free(p3);
-	return -1;
-}
-int func_exec()
-{
-
-return 0;
-}
-
 //预定义函数及参数
 struct Func funcs[]=
 {
@@ -536,15 +450,13 @@ int Corntab_pool()
 {
 	struct corntab_data date;
 	time_t seconds=time(NULL);
-	char name[20];
 	char paras[50];
-	// commands[0].date.second=0x1;
     LinkList *p;
 	while(1)
 	{
 		seconds=time(NULL);
 		date.second=(uint64_t)(seconds%60);
-		// printf("%d\n",seconds);
+		printf("%d\n",seconds);
 		p=pHead;
 		while(p!=NULL)
 		{
@@ -594,7 +506,7 @@ int main(int argc, char const *argv[])
 	// for(int i=0;i<1;i++)
 	// 	fprintf(p,"%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n","*","1,2","1-5/2,9-15/3,18-22/1","20,1-3,8-12/2,*/10","*/2","0-6","help(999)");
 	// fclose(p);
-	Corntab_init("1.txt");
+	Corntab_init((char *)"1.txt");
 	Corntab_pool();
 	return 0;
 }

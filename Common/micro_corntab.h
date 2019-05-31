@@ -1,13 +1,8 @@
 #ifndef _MICRO_CORNTAB_H
 #define _MICRO_CORNTAB_H
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/time.h>
-#include <windows.h>
 
+#include <stdio.h>
+#include <stdint.h>
 
 typedef struct corntab_data
 {
