@@ -8,7 +8,7 @@
 #include <stdarg.h>
 #include <sys/time.h>
 #include <Windows.h>
-
+#include <iostream>
 LinkList *pHead=NULL;
 LinkList *pTail=NULL;
 
@@ -498,9 +498,79 @@ int Corntab_init(char * path)
 	return 0;
 }
 
+static int  swap_endian(int val)//大小端转换
+{
+    val = ((val << 8)&0xFF00FF00) | ((val >> 8)&0x00FF00FF);
+    return (val << 16)|(val >> 16);
+}
+
+static uint32_t  swap_endian(uint32_t val)//大小端转换
+{
+    val = ((val << 8)&0xFF00FF00) | ((val >> 8)&0x00FF00FF);
+    return (val << 16)|(val >> 16);
+}
+
+static uint16_t swap_endian(uint16_t val)
+{
+    return (val << 8)|(val >> 8);
+}
+
+static uint32_t StrToHex(char *src)
+{
+    long dst=0x0;
+    char byte[3]={'\0'};
+    for(int i=0;i<4;i++)
+    {
+        memcpy(byte,src+i*2,2);
+        dst|=strtol(byte,NULL,16)<<(3-i)*8;
+    }
+    return (uint32_t)dst;
+}
+
+static uint8_t StrToHexByte(char *src)
+{
+    uint8_t dst=0x0;
+    char byte[3]={'\0'};
+    memcpy(byte,src,2);
+    dst|=strtol(byte,NULL,16);
+    return dst;
+}
+
+static char * HexToStr(char *ptr,int len)//16进制转字符串
+{
+    char *tmp=new char[len*2+1];
+    for(int i=0;i<len;i++)
+    {
+        sprintf(tmp+i*2,"%02X",(uint8_t)*(ptr+i));
+    }
+    *(tmp+len*2)='\0';
+    return tmp;
+}
+
+static uint32_t FloatToHex(float src)
+{
+    union{
+        float src;
+        uint32_t dst;
+    }FloatToHex;
+    FloatToHex.src=src;
+    return FloatToHex.dst;
+}
+
+static float HexToFloat(uint32_t src)
+{
+    union{
+        float dst;
+        uint32_t src;
+    }FloatToHex;
+    FloatToHex.src=src;
+    return FloatToHex.dst;
+}
+
 //
 int main(int argc, char const *argv[])
 {
+
 	// FILE *p=fopen("1.txt","w+");
 	// fprintf(p,"{second:0-59} {minute:0-59} {hour:0-23} {day-of-month:1-31} {month:1-12} {day-of-week:1-7} {command}\n");
 	// for(int i=0;i<1;i++)
