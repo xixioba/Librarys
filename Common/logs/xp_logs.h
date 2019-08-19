@@ -29,11 +29,12 @@ class xp_logs
 {
     Ringbuf *cachebuff;
     int Cachesize;
+    int Daily;
     char logpath[512];
     int maxtotalsize=50*1024*1024;//单位 K
     int maxlogsize=30*1024*1024;//单位 K
 public:
-    xp_logs(char *path,int cachesize=4*1024*1024);//单位BYTE,cachesize=0,普通模式，cachesize>0,启用cachepool，数据将存入缓存中，稍后自动写入,保证缓存大小可靠，减少丢包
+    xp_logs(const char *path,int daily=1,int cachesize=10*1024*1024);//单位BYTE,cachesize=0,普通模式，cachesize>0,启用cachepool，数据将存入缓存中，稍后自动写入,保证缓存大小可靠，减少丢包
     ~xp_logs();
     int add(char *str,int len=0);//len==0,写入字符串，len>0，写入char *数组
     int get_size(char *filename);//获取文件大小

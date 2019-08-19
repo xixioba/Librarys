@@ -17,7 +17,7 @@
    #else
       //define something for Windows (32-bit only)
    #endif
-#elif defined  __linux__
+#elif defined  defined  __linux__ || defined __APPLE__
     #include <sys/time.h>
     #include <sys/types.h>
     #include <sys/stat.h>
@@ -28,8 +28,10 @@
     #include <pthread.h>
     #include <net/if.h>
     #include <unistd.h>
+	#include <fcntl.h>
     #define Delay(x) sleep(x);
     #define Delayms(x) usleep(x*1000);
+    #include <sys/select.h>
 #else
     #   error "Unknown compiler"
 #endif
@@ -38,9 +40,11 @@
 #include <stdlib.h>
 class UDP
 {
-    void *ptr;
+    int NonBlocking;
+    struct sockaddr_in addr;
+    int socketfd;
 public:
-    UDP(void);
+    UDP(int NonBlocking=0);
     ~UDP(void);
     int Bind(int port);
     int Send(char *data,int len,char * ip,int port);
@@ -49,9 +53,11 @@ public:
 
 class TCP
 {
-    void *ptr;
+    int NonBlocking;
+    struct sockaddr_in addr;
+    int socketfd;
 public:
-    TCP(void);
+    TCP(int NonBlocking=0);
     ~TCP(void);
     int Bind(int port);
     int Listen(int max=5);

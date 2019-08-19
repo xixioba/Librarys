@@ -3,9 +3,10 @@
 
 using namespace std;
 
-xp_logs::xp_logs(char *path,int cachesize)
+xp_logs::xp_logs(const char *path,int daily,int cachesize)
 {
     sprintf(logpath,"%s",path);
+    Daily=daily;
     if(cachesize>0)
     {
         Cachesize=cachesize;
@@ -228,6 +229,7 @@ int xp_logs::add(char *str,int len)
     int size;
     char *name;
     char tmp[1024];
+    int date[6];
     if(list_files(logpath)>2)
     {
         size=get_dir_size(logpath);
@@ -251,6 +253,24 @@ int xp_logs::add(char *str,int len)
         else
         {
             name=get_last_file(logpath);
+            if(Daily==1)
+            {
+                if(sscanf(name,"%4d-%02d-%02d %02d-%02d-%02d.log",&date[0],&date[1],&date[2],&date[3],&date[4],&date[5])>5)
+                {
+                    //判断是否同一天 t->tm_year + 1900, t->tm_mon + 1, t->tm_mday
+                    struct tm *t;
+                    time_t now;
+                    time(&now);
+                    t = localtime(&now);
+                    if((t->tm_year + 1900)==date[0] && (t->tm_mon + 1)==date[1] && t->tm_mday==date[2])//同一天
+                        ;
+                    else
+                    {
+                        if(creat_log()>=0)
+                            name=get_last_file(logpath);
+                    }
+                }
+            }
             if(name)
             {
                 sprintf(tmp,"%s/%s",logpath,name);

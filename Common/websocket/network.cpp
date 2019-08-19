@@ -8,9 +8,9 @@ struct udp_ptr
     char *IP;
 };
 
-UDP::UDP(void)
+UDP::UDP(int NonBlocking)
 {
-    ptr=new udp_ptr;
+    this->NonBlocking=NonBlocking;
 #ifdef _WIN32
     char opt=1;
     WORD wVersionRequested;
@@ -21,72 +21,62 @@ UDP::UDP(void)
         printf("load dll error!\n");
         return ;
     }
-    memset(&(*(udp_ptr *)ptr).udp,0,sizeof((*(udp_ptr *)ptr).udp));
-    (*(udp_ptr *)ptr).sock=socket(PF_INET,SOCK_DGRAM,0);
-    setsockopt((*(udp_ptr *)ptr).sock,SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,&opt,sizeof(char));
-#elif __linux__
+    memset(&addr,0,sizeof(addr));
+    socketfd=socket(PF_INET,SOCK_DGRAM,0);
+    setsockopt(socketfd,SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,&opt,sizeof(char));
+    if(NonBlocking==1)
+    {
+        unsigned long ul=1;
+        if(ioctlsocket(socketfd,FIONBIO,(unsigned long *)&ul)==SOCKET_ERROR)
+            std::cout<<"UDP set NonBlocking error!"<<std::endl;
+    }
+#elif defined  __linux__ || defined __APPLE__
     int opt=1;
-    bzero(&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
-    (*(udp_ptr *)ptr).sock=socket(PF_INET,SOCK_DGRAM,0);
-    setsockopt((*(udp_ptr *)ptr).sock,SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,&opt,sizeof(int));
+    bzero(&addr,sizeof(addr));
+    socketfd=socket(PF_INET,SOCK_DGRAM,0);
+    setsockopt(socketfd,SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,&opt,sizeof(int));
+    int flags = fcntl(socketfd, F_GETFL, 0);
+    fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
 #endif
-    (*(udp_ptr *)ptr).udp.sin_family=AF_INET;
+    addr.sin_family=AF_INET;
 }
 UDP::~UDP(void)
 {
-#ifdef __linux__
-    close((*(udp_ptr *)ptr).sock);
+#ifdef defined  __linux__ || defined __APPLE__
+    close(socketfd);
 #else
-    closesocket((*(udp_ptr *)ptr).sock);
+    closesocket(socketfd);
 #endif
-    delete (udp_ptr *)ptr;
+#ifdef _WIN32
+    WSACleanup();
+#endif
 }
 int UDP::Bind(int port)
 {
-    (*(udp_ptr *)ptr).PORT=port;
-    (*(udp_ptr *)ptr).udp.sin_port=htons(port);
-    (*(udp_ptr *)ptr).udp.sin_addr.s_addr=htonl(INADDR_ANY);
-    return ::bind((*(udp_ptr *)ptr).sock,(struct sockaddr *)&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
+    addr.sin_port=htons(port);
+    addr.sin_addr.s_addr=htonl(INADDR_ANY);
+    return ::bind(socketfd,(struct sockaddr *)&addr,sizeof(addr));
 }
-int UDP::Send(char *data,int len,char * ip=0,int port=0)
+int UDP::Send(char *data,int len,char * ip,int port)
 {
-    if(port!=0)
-        (*(udp_ptr *)ptr).udp.sin_port=htons(port);
-    else
-    {
-        if((*(udp_ptr *)ptr).PORT==0)
-            return -1;
-    }
-    if(ip!=0)
-        (*(udp_ptr *)ptr).udp.sin_addr.s_addr=inet_addr(ip);
-    else
-    {
-        if((*(udp_ptr *)ptr).IP==0)
-            return -1;
-    }
-    return sendto((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr *)&(*(udp_ptr *)ptr).udp,sizeof((*(udp_ptr *)ptr).udp));
+    addr.sin_port=htons(port);
+    addr.sin_addr.s_addr=inet_addr(ip);
+    return sendto(socketfd,data,len,0,(struct sockaddr *)&addr,sizeof(addr));
 }
 int UDP::Read(char *data,int len)
 {
     #ifdef _WIN32
     int length=sizeof(sockaddr);
-    #elif __linux__
+    #elif defined  __linux__ || defined __APPLE__
     socklen_t length=sizeof(sockaddr);
     #endif
-    return recvfrom((*(udp_ptr *)ptr).sock,data,len,0,(struct sockaddr*)&(*(udp_ptr *)ptr).udp,&length);
+    return recvfrom(socketfd,data,len,0,(struct sockaddr*)&addr,&length);
 }
 
-struct tcp_ptr
-{
-    struct sockaddr_in tcp;
-    int sock;
-    int PORT;
-    char *IP;
-};
 
-TCP::TCP(void)
+TCP::TCP(int NonBlocking)
 {
-    ptr=new tcp_ptr;
+    this->NonBlocking=NonBlocking;
 #ifdef _WIN32
     char opt=1;
     WORD wVersionRequested;
@@ -97,67 +87,132 @@ TCP::TCP(void)
         printf("load dll error!\n");
         return ;
     }
-    memset(&(*(tcp_ptr *)ptr).tcp,0,sizeof((*(tcp_ptr *)ptr).tcp));
-    (*(tcp_ptr *)ptr).sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
-    setsockopt((*(tcp_ptr *)ptr).sock,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(char));
-#elif __linux__
+    memset(&addr,0,sizeof(addr));
+    socketfd=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
+    setsockopt(socketfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(char));
+    if(NonBlocking==1)
+    {
+        unsigned long ul=1;
+        if(ioctlsocket(socketfd,FIONBIO,(unsigned long *)&ul)==SOCKET_ERROR)
+            std::cout<<"TCP set NonBlocking error!"<<std::endl;
+    }
+#elif defined  __linux__ || defined __APPLE__
     int opt=1;
-    bzero(&(*(tcp_ptr *)ptr).tcp,sizeof((*(tcp_ptr *)ptr).tcp));
-    (*(tcp_ptr *)ptr).sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
-    setsockopt((*(tcp_ptr *)ptr).sock,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(int));
+    bzero(&addr,sizeof(addr));
+    socketfd=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
+    setsockopt(socketfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(int));
+    int flags = fcntl(socketfd, F_GETFL, 0);
+    fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
 #endif
-    (*(tcp_ptr *)ptr).tcp.sin_family=AF_INET;
+    addr.sin_family=AF_INET;
 }
 TCP::~TCP(void)
 {
-#ifdef __linux__
-    close((*(udp_ptr *)ptr).sock);
+#ifdef defined  __linux__ || defined __APPLE__
+    close(socketfd);
 #else
-    closesocket((*(udp_ptr *)ptr).sock);
+    closesocket(socketfd);
 #endif
-    delete (tcp_ptr *)ptr;
+
+#ifdef _WIN32
+    WSACleanup();
+#endif
 }
 int TCP::Bind(int port)
 {
-    (*(tcp_ptr *)ptr).PORT=port;
-    (*(tcp_ptr *)ptr).tcp.sin_port=htons(port);
-    (*(tcp_ptr *)ptr).tcp.sin_addr.s_addr=htonl(INADDR_ANY);
-    return ::bind((*(tcp_ptr *)ptr).sock,(struct sockaddr *)&(*(tcp_ptr *)ptr).tcp,sizeof((*(tcp_ptr *)ptr).tcp));
+    addr.sin_port=htons(port);
+    addr.sin_addr.s_addr=htonl(INADDR_ANY);
+    return ::bind(socketfd,(struct sockaddr *)&addr,sizeof(addr));
 }
 int TCP::Listen(int max)
 {
-    return listen((*(tcp_ptr *)ptr).sock,max);
+    return listen(socketfd,max);
 }
 int TCP::Accept()
 {
     struct sockaddr_in client;
     #ifdef _WIN32
     int length=sizeof(sockaddr);
-    #elif __linux__
+    #elif defined  __linux__ || defined __APPLE__
     socklen_t length=sizeof(sockaddr);
     #endif
-    return accept((*(tcp_ptr *)ptr).sock, (struct sockaddr*)&client, &length);
+    return accept(socketfd, (struct sockaddr*)&client, &length);
 }
 int TCP::Connect(int port=0,char *ip=0)
 {
     if(port!=0)
-        (*(tcp_ptr *)ptr).tcp.sin_port=htons(port);
-    else if((*(tcp_ptr *)ptr).PORT!=0)
-    {
-        (*(tcp_ptr *)ptr).tcp.sin_port=htons((*(tcp_ptr *)ptr).PORT);
-    }
-    else
-        return -1;
+        addr.sin_port=htons(port);
     if(ip!=0)
-        (*(tcp_ptr *)ptr).tcp.sin_addr.s_addr=inet_addr(ip);
-    else if((*(tcp_ptr *)ptr).IP!=0)
+        addr.sin_addr.s_addr=inet_addr(ip);
+    if(NonBlocking==1)
     {
-        (*(tcp_ptr *)ptr).tcp.sin_addr.s_addr=inet_addr((*(tcp_ptr *)ptr).IP);
+        int ret;
+        ret=connect(socketfd, (struct sockaddr*) &addr, sizeof(addr));
+        if(ret == 0)
+        {
+            std::cout<<"tcp has connected\n"<<std::endl;
+        }
+        else if(ret < 0)
+        {
+            if(errno == EINPROGRESS)
+            {
+                fd_set writefds;
+                FD_ZERO(&writefds);
+                FD_SET(socketfd, &writefds);
+                struct timeval timeout;
+                timeout.tv_sec = 6;
+                timeout.tv_usec = 0;
+                ret = select(socketfd + 1, NULL, &writefds, NULL, &timeout );
+                if(ret < 0)
+                {
+                    return -1;
+                }
+                if (ret == 0)
+                {
+                    std::cout<<"connection timeout\n"<<std::endl;
+                    return -1;
+                }
+                else
+                {
+                    if(!FD_ISSET(socketfd, &writefds))
+                    {
+                         std::cout<<"err, no events found!\n"<<std::endl;
+                        return -1;
+                    }
+                    else
+                    {
+                        int err = 0;
+                        #ifdef _WIN32
+                        int elen=sizeof(err);
+                        #elif defined  __linux__ || defined __APPLE__
+                        socklen_t elen=sizeof(err);
+                        #endif
+                        ret = getsockopt(socketfd, SOL_SOCKET, SO_ERROR, (char *)&err, &elen);
+                        if(ret < 0)
+                        {
+                            std::cout<<"getsockopt\n"<<std::endl;
+                            return -1;
+                        }
+                        if(err != 0)
+                        {
+                            std::cout<<"connect failed with the error: "<< err<<strerror(err)<<std::endl;
+                            return -1;
+                        }
+                        else
+                        {
+                            std::cout<<"connected\n"<<std::endl;
+                        }
+                    }
+                }
+            }
+        }
+        return socketfd;
     }
     else
-        return -1;
-    if(connect((*(tcp_ptr *)ptr).sock, (struct sockaddr*) &(*(tcp_ptr *)ptr).tcp, sizeof((*(tcp_ptr *)ptr).tcp))>=0)
-        return (*(tcp_ptr *)ptr).sock;
+    {
+        if(connect(socketfd, (struct sockaddr*) &addr, sizeof(addr))>=0)
+            return socketfd;
+    }
     return -1;
 }
 int TCP::Send(int fd,char *data,int len)
