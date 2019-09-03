@@ -8,7 +8,6 @@
     #ifdef _MSC_VER
         #pragma comment(lib,"ws2_32.lib")
     #endif
-    #include <iostream>
     #include <thread>
     #define Delay(x) Sleep(1000*x);
     #define Delayms(x) Sleep(x);
@@ -17,7 +16,7 @@
    #else
       //define something for Windows (32-bit only)
    #endif
-#elif defined  defined  __linux__ || defined __APPLE__
+#elif defined  __linux__ || defined __APPLE__
     #include <sys/time.h>
     #include <sys/types.h>
     #include <sys/stat.h>
@@ -35,6 +34,7 @@
 #else
     #   error "Unknown compiler"
 #endif
+#include <iostream>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

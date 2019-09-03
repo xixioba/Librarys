@@ -52,7 +52,6 @@ int xp_logs::list_all_files(char *basePath)
     DIR *dir;
     struct dirent *ptr;
     char base[1000];
-    char tmp[1024];
     if ((dir=opendir(basePath)) == NULL)
     {
         perror("No such dir ");

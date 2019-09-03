@@ -12,7 +12,7 @@
    #else
       //define something for Windows (32-bit only)
    #endif
-#elif defined  __linux__
+#elif defined  __linux__ || defined __APPLE__
     #include <unistd.h>
     #include <dirent.h>
     #include<sys/stat.h>

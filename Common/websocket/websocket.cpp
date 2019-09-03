@@ -268,7 +268,7 @@ int WEBSOCKET::Read(int fd,char *data,uint32_t len)
             wsReadHeader(buff,&header);
             wsDecodeFrame(&header,buff,len,data);
         }
-        delete buff;
+        delete [] buff;
         return len;
     }
     return 0;
@@ -278,7 +278,7 @@ int WEBSOCKET::Read(int fd,char *data,uint32_t len)
 WEBSOCKET::WEBSOCKET(int port,int listen)
 {
     TCP::Bind(port);
-    TCP::Listen();
+    TCP::Listen(listen);
     std::thread runpool(&WEBSOCKET::run,this);
     runpool.detach();
 }

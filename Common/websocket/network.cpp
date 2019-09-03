@@ -42,13 +42,13 @@ UDP::UDP(int NonBlocking)
 }
 UDP::~UDP(void)
 {
-#ifdef defined  __linux__ || defined __APPLE__
+#if defined  __linux__ || defined __APPLE__
     close(socketfd);
 #else
     closesocket(socketfd);
 #endif
 #ifdef _WIN32
-    WSACleanup();
+//    WSACleanup();
 #endif
 }
 int UDP::Bind(int port)
@@ -108,14 +108,14 @@ TCP::TCP(int NonBlocking)
 }
 TCP::~TCP(void)
 {
-#ifdef defined  __linux__ || defined __APPLE__
+#if defined  __linux__ || defined __APPLE__
     close(socketfd);
 #else
     closesocket(socketfd);
 #endif
 
 #ifdef _WIN32
-    WSACleanup();
+//    WSACleanup();
 #endif
 }
 int TCP::Bind(int port)
@@ -169,14 +169,14 @@ int TCP::Connect(int port=0,char *ip=0)
                 }
                 if (ret == 0)
                 {
-                    std::cout<<"connection timeout\n"<<std::endl;
+                    std::cout<<"connection timeout"<<std::endl;
                     return -1;
                 }
                 else
                 {
                     if(!FD_ISSET(socketfd, &writefds))
                     {
-                         std::cout<<"err, no events found!\n"<<std::endl;
+                         std::cout<<"err, no events found!"<<std::endl;
                         return -1;
                     }
                     else
@@ -190,7 +190,7 @@ int TCP::Connect(int port=0,char *ip=0)
                         ret = getsockopt(socketfd, SOL_SOCKET, SO_ERROR, (char *)&err, &elen);
                         if(ret < 0)
                         {
-                            std::cout<<"getsockopt\n"<<std::endl;
+                            std::cout<<"getsockopt"<<std::endl;
                             return -1;
                         }
                         if(err != 0)
@@ -200,7 +200,7 @@ int TCP::Connect(int port=0,char *ip=0)
                         }
                         else
                         {
-                            std::cout<<"connected\n"<<std::endl;
+                            std::cout<<"connected"<<std::endl;
                         }
                     }
                 }
